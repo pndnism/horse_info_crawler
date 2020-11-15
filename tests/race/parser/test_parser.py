@@ -5,6 +5,7 @@ from unittest import TestCase
 from horse_info_crawler.race.parser import RaceInfoListingPageParser, RaceInfoParser
 from horse_info_crawler.race.config import RACE_LISTING_PAGE_POST_INPUT_DIC
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 class TestRaceInfoLisingPageParser(TestCase):
     def test_parse_normal(self):
@@ -40,7 +41,7 @@ class TestRaceInfoParser(TestCase):
 
             self.assertEqual(result.name, "C2十三組")
             self.assertEqual(result.race_number, "1 R")
-            self.assertEqual(result.course_run_info, "ダ左1400m / 天候 : 晴 / ダート : 良 / 発走 : 14:45")
+            self.assertEqual(result.course_run_info, "ダ左1200m / 天候 : 曇 / ダート : 稍重 / 発走 : 11:50")
             self.assertEqual(result.held_info, "2020年11月14日 11回盛岡1日目")
-            self.assertEqual(result.race_details, pd.read_pickle("../data/test_race_info_dataframe.pkl"))
+            assert_frame_equal(result.race_details, pd.read_pickle(f"{os.path.dirname(__file__)}/data/test_race_info_dataframe.pkl"))
 

@@ -48,13 +48,20 @@ class RaceInfoParser:
         return soup.find_all("h1")[1].text
 
     def _parse_race_number(self, soup: BeautifulSoup) -> str:
-        pass
+        race_number_elem = soup.find("dl", class_="racedata fc").find("dt")
+        race_number = re.sub("\n","",race_number_elem.text)
+        return race_number
 
     def _course_run_info(self, soup: BeautifulSoup) -> str:
-        pass
+        course_run_info_elem = soup.find("diary_snap_cut").find("span")
+        course_run_info = re.sub(u"\xa0"," ",course_run_info_elem.text)
+        return course_run_info
 
     def _parse_held_info(self, soup: BeautifulSoup) -> str:
-        pass
+        held_info_elem = soup.find("p", class_="smalltxt")
+        held_info = re.sub("\xa0","",held_info_elem.text)
+        held_info = re.sub(" \Z","",held_info)
+        return held_info
 
     def _parse_race_details(self, soup: BeautifulSoup) -> DataFrame:
         table = soup.find("table", summary="レース結果")
