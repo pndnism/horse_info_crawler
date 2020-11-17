@@ -64,3 +64,27 @@ class TestRaceInfoLisingPageScraper(TestCase):
         self.assertEqual(parser_mock.parse.call_args.args[0], "test html")
 
         self.assertEqual(result, expected_listing_page)
+
+    @responses.activate
+    def test_get_response_error_client(self):
+        test_absolute_path = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        responses.add(responses.GET, test_absolute_path,
+                      body="client error", status=404)
+
+        listing_page_url = test_absolute_path
+        listing_page_requester = RaceInfoListingPageScraper(Mock(spec=RaceInfoListingPageParser))
+
+        with self.assertRaises(HTTPError):
+            listing_page_requester.get(listing_page_url)
+
+    @responses.activate
+    def test_get_response_error_server(self):
+        test_absolute_path = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        responses.add(responses.GET, test_absolute_path,
+                      body="server error", status=500)
+
+        listing_page_url = test_absolute_path
+        listing_page_requester = RaceInfoListingPageScraper(Mock(spec=RaceInfoListingPageParser))
+
+        with self.assertRaises(HTTPError):
+            listing_page_requester.get(listing_page_url)
