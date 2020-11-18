@@ -25,14 +25,14 @@ class RaceInfoListingPageScraper:
         return self.parser.parse(response.text)
 
 @dataclass
-class RaceInfoParser:
+class RaceInfoScraper:
 
     parser: RaceInfoParser
 
     def get(self, race_info_page_url: str) -> RaceInfo:
         # race_info_parser が相対パスだったら絶対パスに変換数
-        race_info_page_absoltute_url = urllib.parse.urljoin(NETKEIBA_BASE_URL, race_info_page_url)
-        logger.info(f"Accessing to {race_info_page_absoltute_url}.")
-        response = requests.get(race_info_page_url)
+        race_info_page_absolute_url = urllib.parse.urljoin(NETKEIBA_BASE_URL, race_info_page_url)
+        logger.info(f"Accessing to {race_info_page_absolute_url}.")
+        response = requests.get(race_info_page_absolute_url)
         response.raise_for_status()
         return self.parser.parse(response.text)
