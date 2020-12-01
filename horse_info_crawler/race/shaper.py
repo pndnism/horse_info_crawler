@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from horse_info_crawler.race.normalizer import RaceDetailsNormalizer, RaceInfoNormalizer
 from horse_info_crawler.race.domain import RaceInfo, ShapedRaceData, ShapedRaceDetailInfo, ShapedRaceInfo
 from typing import Type
 
