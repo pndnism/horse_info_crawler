@@ -55,43 +55,43 @@ class ShapedRaceInfo:
 @dataclass(frozen=True)
 class ShapedRaceDetailInfo:
     # 着順
-    arrival_order: List[str]
+    arrival_orders: List[str]
     # 枠番
-    box_number: List[str]
+    box_numbers: List[str]
     # 馬番
-    horse_number: List[str]
+    horse_numbers: List[str]
     # 馬名
-    horse_name: List[str]
+    horse_names: List[str]
     # 性別
-    horse_sex: List[str]
+    horse_sexes: List[str]
     # 年齢
-    horse_age: List[str]
+    horse_ages: List[str]
     # 斤量
-    jockey_weight: List[str]
+    jockey_weights: List[str]
     # 騎手
-    jockey_name: List[str]
+    jockey_names: List[str]
     # タイム
-    goal_time: List[str]
+    goal_times: List[str]
     # 着差
-    goal_margin: List[str]
+    goal_margins: List[str]
     # 通過
-    order_transition: List[str]
+    order_transitions: List[str]
     # 上り
-    half_time: List[str]
+    half_times: List[str]
     # 単勝オッズ
     odds: List[str]
     # 人気
-    popularity: List[str]
+    popularities: List[str]
     # 馬体重
-    horse_weight: List[str]
+    horse_weights: List[str]
     # 馬体重変化
-    horse_weight_diff: List[str]
+    horse_weight_diffs: List[str]
     # 調教師
-    trainer_name: List[str]
+    trainer_names: List[str]
     # 馬主
-    horse_owner: List[str]
+    horse_owners: List[str]
     # 賞金
-    earn_prize: List[str]
+    earn_prizes: List[str]
 
 @dataclass
 class ShapedRaceData:
