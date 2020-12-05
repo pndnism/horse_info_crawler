@@ -11,7 +11,7 @@ services:
       - ./main.py:/var/app/main.py
       - ./horse_info_crawler:/var/app/horse_info_crawler
     ports:
-      - 5000:5000
+      - 8000:8000
     environment:
       TZ: Asia/Tokyo
       AWS_ACCESS_KEY_ID: dummy

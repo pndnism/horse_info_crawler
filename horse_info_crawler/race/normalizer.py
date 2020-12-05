@@ -1,3 +1,4 @@
+import re
 from typing import List
 from pandas.core.frame import DataFrame
 
@@ -17,11 +18,11 @@ class InvalidFormatError(Exception):
 class RaceInfoNormalizer:
     @classmethod
     def normalize_name(cls, name: str) -> str:
-        pass
+        return name
 
     @classmethod
     def normalize_race_number(cls, race_number: str) -> str:
-        pass
+        return re.find(r'(\d+)\sR', race_number)
 
     @classmethod
     def normalize_course_type(cls, name: str) -> str:
