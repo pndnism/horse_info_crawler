@@ -7,20 +7,24 @@ import re
 from typing import Optional
 from horse_info_crawler.components.logger import warning
 
+
 class RaceInfoListingPageParser:
     """
     取得したHTMLをパースして構造化したデータに変換する
     """
-    def parse(self, html:str) -> ListingPage:
+
+    def parse(self, html: str) -> ListingPage:
         soup = BeautifulSoup(html, "html.parser")
 
-        next_page_post_parameter=None
+        next_page_post_parameter = None
         next_page_element = soup.select_one("div.pager a:contains('次')")
         if next_page_element:
-            RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = RACE_LISTING_PAGE_POST_INPUT_DIC.get("page") + 1
+            RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = RACE_LISTING_PAGE_POST_INPUT_DIC.get(
+                "page") + 1
             next_page_post_parameter = RACE_LISTING_PAGE_POST_INPUT_DIC
-        
-        race_info_page_urls = [i.get("href") for i in soup.find_all(href=re.compile("/race/\d"))]
+
+        race_info_page_urls = [
+            i.get("href") for i in soup.find_all(href=re.compile("/race/\d"))]
 
         return ListingPage(
             next_page_element=next_page_element,
@@ -33,6 +37,7 @@ class RaceInfoParser:
     """
     取得したHTMLをパースして構造化したデータに変換する
     """
+
     def parse(self, html) -> RaceInfo:
         soup = BeautifulSoup(html, "html.parser")
 
@@ -49,18 +54,18 @@ class RaceInfoParser:
 
     def _parse_race_number(self, soup: BeautifulSoup) -> str:
         race_number_elem = soup.find("dl", class_="racedata fc").find("dt")
-        race_number = re.sub("\n","",race_number_elem.text)
+        race_number = re.sub("\n", "", race_number_elem.text)
         return race_number
 
     def _course_run_info(self, soup: BeautifulSoup) -> str:
         course_run_info_elem = soup.find("diary_snap_cut").find("span")
-        course_run_info = re.sub(u"\xa0"," ",course_run_info_elem.text)
+        course_run_info = re.sub(u"\xa0", " ", course_run_info_elem.text)
         return course_run_info
 
     def _parse_held_info(self, soup: BeautifulSoup) -> str:
         held_info_elem = soup.find("p", class_="smalltxt")
-        held_info = re.sub("\xa0","",held_info_elem.text)
-        held_info = re.sub(" \Z","",held_info)
+        held_info = re.sub("\xa0", "", held_info_elem.text)
+        held_info = re.sub(" \Z", "", held_info)
         return held_info
 
     def _parse_race_details(self, soup: BeautifulSoup) -> DataFrame:
@@ -75,7 +80,9 @@ class RaceInfoParser:
             # tdsのデータ数がカラム数に一致しない場合（ブランク）などは排除し、
             if len(tds) == len(columns):
                 # （ある行成分の）全セルデータをテキスト成分としてvaluesに格納、リスト化
-                values = [ td.text.replace('\n', '').replace('\xa0', ' ') for td in tds ]
+                values = [td.text.replace('\n', '').replace(
+                    '\xa0', ' ') for td in tds]
                 # valuesをpd.seriesデータに変換、データフレームに結合
-                df = df.append(pd.Series(values, index=columns), ignore_index= True)
+                df = df.append(pd.Series(values, index=columns),
+                               ignore_index=True)
         return df

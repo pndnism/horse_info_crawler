@@ -9,11 +9,13 @@ class UnsupportedFormatError(Exception):
     """
     pass
 
+
 class InvalidFormatError(Exception):
     """
     想定していないフォーマットのデータが入力された時のエラー
     """
     pass
+
 
 class RaceInfoNormalizer:
     @classmethod
@@ -22,51 +24,65 @@ class RaceInfoNormalizer:
 
     @classmethod
     def normalize_race_number(cls, race_number: str) -> str:
-        return re.find(r'(\d+)\sR', race_number)
+        return re.findall(r'(\d+)\sR', race_number)[0]
 
     @classmethod
-    def normalize_course_type(cls, name: str) -> str:
-        pass
+    def normalize_course_type(cls, course_run_info: str) -> str:
+        elem = course_run_info.split(" / ")[0]
+        return re.search("ダ|芝|障芝", elem).group()
 
     @classmethod
     def normalize_course_direction(cls, course_run_info: str) -> str:
-        pass
+        elem = course_run_info.split(" / ")[0]
+        return re.search("右|左|直線|ダート|外|内-外|外-内|内2周", elem).group()
 
     @classmethod
     def normalize_course_length(cls, course_run_info: str) -> str:
-        pass
+        elem = course_run_info.split(" / ")[0]
+        return re.search("[0-9]{2,5}", elem).group()
 
     @classmethod
     def normalize_weather(cls, course_run_info: str) -> str:
-        pass
-
+        if "天候" in course_run_info:
+            elem = course_run_info.split(" / ")[1]
+            return re.split(' : ', elem)[1]
+        
+        raise InvalidFormatError(f'Invalid format. : {course_run_info}')
+        
     @classmethod
     def normalize_course_condition(cls, course_run_info: str) -> str:
-        pass
+        elem = course_run_info.split(" / ")[2]
+        return re.split(' : ', elem)[1]
 
     @classmethod
     def normalize_race_start_time(cls, course_run_info: str) -> str:
-        pass
+        elem = course_run_info.split(" / ")[3]
+        return re.split(' : ', elem)[1]
 
     @classmethod
     def normalize_held_date(cls, held_info: str) -> str:
-        pass
+        elem = held_info.split(" ")[0]
+        return elem
 
     @classmethod
     def normalize_held_place(cls, held_info: str) -> str:
-        pass
+        elem = held_info.split(" ")[1]
+        return re.sub("[[0-9]+回|[0-9]+日目","",elem)
 
     @classmethod
     def normalize_held_number(cls, held_info: str) -> str:
-        pass
+        elem = held_info.split(" ")[1]
+        return re.findall("(\d+)回", elem)[0]
 
     @classmethod
     def normalize_held_date_number(cls, held_info: str) -> str:
-        pass
+        elem = held_info.split(" ")[1]
+        return re.findall("(\d+)日目", elem)[0]
 
     @classmethod
     def normalize_explanation(cls, held_info: str) -> str:
-        pass
+        return "".join(held_info.split(" ")[2:])
+
 
 class RaceDetailsNormalizer:
     @classmethod

@@ -11,18 +11,22 @@ from horse_info_crawler.components import logger
 
 NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
 
+
 @dataclass
 class RaceInfoListingPageScraper:
-    LISTING_PAGE_START_URLS = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+    LISTING_PAGE_START_URLS = '%s?%s' % (
+        NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
     parser: RaceInfoListingPageParser
 
     def get(self, listing_page_url: str) -> ListingPage:
         # listing_page_url が相対パスだったら絶対パスに変換する
-        listing_page_absolute_url = urllib.parse.urljoin(NETKEIBA_BASE_URL, listing_page_url)
+        listing_page_absolute_url = urllib.parse.urljoin(
+            NETKEIBA_BASE_URL, listing_page_url)
         logger.info(f"Accessing to {listing_page_absolute_url}.")
         response = requests.get(listing_page_absolute_url)
         response.raise_for_status()
-        return self.parser.parse(response.text)
+        return self.parser.parse(response.content)
+
 
 @dataclass
 class RaceInfoScraper:
@@ -31,8 +35,9 @@ class RaceInfoScraper:
 
     def get(self, race_info_page_url: str) -> RaceInfo:
         # race_info_parser が相対パスだったら絶対パスに変換数
-        race_info_page_absolute_url = urllib.parse.urljoin(NETKEIBA_BASE_URL, race_info_page_url)
+        race_info_page_absolute_url = urllib.parse.urljoin(
+            NETKEIBA_BASE_URL, race_info_page_url)
         logger.info(f"Accessing to {race_info_page_absolute_url}.")
         response = requests.get(race_info_page_absolute_url)
         response.raise_for_status()
-        return self.parser.parse(response.text)
+        return self.parser.parse(response.content)

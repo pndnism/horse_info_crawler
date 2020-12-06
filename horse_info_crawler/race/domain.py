@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, List
 from pandas.core.frame import DataFrame
 
+
 @dataclass(frozen=True)
 class RaceInfo:
     # レース名
@@ -15,11 +16,13 @@ class RaceInfo:
     # レース詳細情報
     race_details: DataFrame
 
+
 @dataclass(frozen=True)
 class ListingPage:
     next_page_post_parameter: Optional[str]
     next_page_element: Optional[str]
     race_info_page_urls: List[str]
+
 
 @dataclass(frozen=True)
 class ShapedRaceInfo:
@@ -31,7 +34,7 @@ class ShapedRaceInfo:
     course_type: str
     # コースの向き
     course_direction: str
-    # コース長
+    # コース長（単位: m）
     course_length: str
     # 天気
     weather: str
@@ -51,6 +54,7 @@ class ShapedRaceInfo:
     explanation: str
     # レース詳細情報
     race_details: DataFrame
+
 
 @dataclass(frozen=True)
 class ShapedRaceDetailInfo:
@@ -92,6 +96,7 @@ class ShapedRaceDetailInfo:
     horse_owners: List[str]
     # 賞金
     earn_prizes: List[str]
+
 
 @dataclass
 class ShapedRaceData:

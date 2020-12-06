@@ -7,6 +7,7 @@ from horse_info_crawler.race.config import RACE_LISTING_PAGE_POST_INPUT_DIC
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
+
 class TestRaceInfoLisingPageParser(TestCase):
     def test_parse_normal(self):
         with open(f"{os.path.dirname(__file__)}/data/test_parse_normal_lising_page.html") as f:
@@ -16,8 +17,9 @@ class TestRaceInfoLisingPageParser(TestCase):
             result = parser.parse(response_html)
             self.assertIsNotNone(result)
             self.assertIsNotNone(result.next_page_element)
-            RACE_LISTING_PAGE_POST_INPUT_DIC["page"]=2
-            self.assertEqual(result.next_page_post_parameter, RACE_LISTING_PAGE_POST_INPUT_DIC)
+            RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = 2
+            self.assertEqual(result.next_page_post_parameter,
+                             RACE_LISTING_PAGE_POST_INPUT_DIC)
             self.assertEqual(len(result.race_info_page_urls), 100)
 
     def test_parse_normal_last_page(self):
@@ -27,7 +29,8 @@ class TestRaceInfoLisingPageParser(TestCase):
             parser = RaceInfoListingPageParser()
             result = parser.parse(response_html)
             self.assertIsNotNone(result)
-            self.assertIsNone(result.next_page_element)    
+            self.assertIsNone(result.next_page_element)
+
 
 class TestRaceInfoParser(TestCase):
     def test_parse_normal(self):
@@ -41,7 +44,8 @@ class TestRaceInfoParser(TestCase):
 
             self.assertEqual(result.name, "C2十三組")
             self.assertEqual(result.race_number, "1 R")
-            self.assertEqual(result.course_run_info, "ダ左1200m / 天候 : 曇 / ダート : 稍重 / 発走 : 11:50")
+            self.assertEqual(result.course_run_info,
+                             "ダ左1200m / 天候 : 曇 / ダート : 稍重 / 発走 : 11:50")
             self.assertEqual(result.held_info, "2020年11月14日 11回盛岡1日目")
-            assert_frame_equal(result.race_details, pd.read_pickle(f"{os.path.dirname(__file__)}/data/test_race_info_dataframe.pkl"))
-
+            assert_frame_equal(result.race_details, pd.read_pickle(
+                f"{os.path.dirname(__file__)}/data/test_race_info_dataframe.pkl"))

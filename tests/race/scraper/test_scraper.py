@@ -11,13 +11,15 @@ from urllib.parse import urlencode
 
 NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
 
+
 class TestRaceInfoLisingPageScraper(TestCase):
     @responses.activate
     def test_get_absolute_path(self):
 
-        test_absolute_path = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
-        responses.add(responses.GET, test_absolute_path, 
-                        body="test html", status=200)
+        test_absolute_path = '%s?%s' % (
+            NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        responses.add(responses.GET, test_absolute_path,
+                      body="test html", status=200)
 
         parser_mock = Mock(spec=RaceInfoListingPageParser)
         expected_listing_page = ListingPage(next_page_post_parameter=None,
@@ -26,7 +28,8 @@ class TestRaceInfoLisingPageScraper(TestCase):
 
         parser_mock.parse.return_value = expected_listing_page
 
-        listing_page_url = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        listing_page_url = '%s?%s' % (
+            NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
         listing_page_requester = RaceInfoListingPageScraper(parser_mock)
         result = listing_page_requester.get(listing_page_url)
 
@@ -41,10 +44,11 @@ class TestRaceInfoLisingPageScraper(TestCase):
     @responses.activate
     def test_get_relative_path(self):
 
-        test_absolute_path = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        test_absolute_path = '%s?%s' % (
+            NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
         test_relative_path = urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)
-        responses.add(responses.GET, test_absolute_path, 
-                        body="test html", status=200)
+        responses.add(responses.GET, test_absolute_path,
+                      body="test html", status=200)
 
         parser_mock = Mock(spec=RaceInfoListingPageParser)
         expected_listing_page = ListingPage(next_page_post_parameter=None,
@@ -67,27 +71,32 @@ class TestRaceInfoLisingPageScraper(TestCase):
 
     @responses.activate
     def test_get_response_error_client(self):
-        test_absolute_path = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        test_absolute_path = '%s?%s' % (
+            NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
         responses.add(responses.GET, test_absolute_path,
                       body="client error", status=404)
 
         listing_page_url = test_absolute_path
-        listing_page_requester = RaceInfoListingPageScraper(Mock(spec=RaceInfoListingPageParser))
+        listing_page_requester = RaceInfoListingPageScraper(
+            Mock(spec=RaceInfoListingPageParser))
 
         with self.assertRaises(HTTPError):
             listing_page_requester.get(listing_page_url)
 
     @responses.activate
     def test_get_response_error_server(self):
-        test_absolute_path = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        test_absolute_path = '%s?%s' % (
+            NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
         responses.add(responses.GET, test_absolute_path,
                       body="server error", status=500)
 
         listing_page_url = test_absolute_path
-        listing_page_requester = RaceInfoListingPageScraper(Mock(spec=RaceInfoListingPageParser))
+        listing_page_requester = RaceInfoListingPageScraper(
+            Mock(spec=RaceInfoListingPageParser))
 
         with self.assertRaises(HTTPError):
             listing_page_requester.get(listing_page_url)
+
 
 class TestRaceInfoScraper(TestCase):
     @responses.activate
@@ -96,10 +105,10 @@ class TestRaceInfoScraper(TestCase):
                       body="test html", status=200)
         parser_mock = Mock(spec=RaceInfoParser)
         expected_race_info_page = RaceInfo(name=None,
-                                            race_number=None,
-                                            course_run_info=None,
-                                            held_info=None,
-                                            race_details=None)
+                                           race_number=None,
+                                           course_run_info=None,
+                                           held_info=None,
+                                           race_details=None)
         parser_mock.parse.return_value = expected_race_info_page
 
         race_info_page_url = "https://db.netkeiba.com/race/202005040811/"
@@ -121,10 +130,10 @@ class TestRaceInfoScraper(TestCase):
                       body="test html", status=200)
         parser_mock = Mock(spec=RaceInfoParser)
         expected_race_info_page = RaceInfo(name=None,
-                                            race_number=None,
-                                            course_run_info=None,
-                                            held_info=None,
-                                            race_details=None)
+                                           race_number=None,
+                                           course_run_info=None,
+                                           held_info=None,
+                                           race_details=None)
         parser_mock.parse.return_value = expected_race_info_page
 
         race_info_page_url = "/race/202005040811/"
