@@ -37,7 +37,7 @@ class TestRaceInfoLisingPageScraper(TestCase):
         self.assertEqual(responses.calls[0].request.url,
                          '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
 
-        self.assertEqual(parser_mock.parse.call_args.args[0], "test html")
+        self.assertEqual(parser_mock.parse.call_args.args[0], b"test html")
 
         self.assertEqual(result, expected_listing_page)
 
@@ -65,7 +65,7 @@ class TestRaceInfoLisingPageScraper(TestCase):
         self.assertEqual(responses.calls[0].request.url,
                          '%s?%s' % (NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
 
-        self.assertEqual(parser_mock.parse.call_args.args[0], "test html")
+        self.assertEqual(parser_mock.parse.call_args.args[0], b"test html")
 
         self.assertEqual(result, expected_listing_page)
 
@@ -121,7 +121,7 @@ class TestRaceInfoScraper(TestCase):
         self.assertEqual(responses.calls[0].request.url,
                          "https://db.netkeiba.com/race/202005040811/")
 
-        self.assertEqual(parser_mock.parse.call_args.args[0], "test html")
+        self.assertEqual(parser_mock.parse.call_args.args[0], b"test html")
         self.assertEqual(result, expected_race_info_page)
 
     @responses.activate
@@ -146,7 +146,7 @@ class TestRaceInfoScraper(TestCase):
         self.assertEqual(responses.calls[0].request.url,
                          "https://db.netkeiba.com/race/202005040811/")
 
-        self.assertEqual(parser_mock.parse.call_args.args[0], "test html")
+        self.assertEqual(parser_mock.parse.call_args.args[0], b"test html")
         self.assertEqual(result, expected_race_info_page)
 
     @responses.activate

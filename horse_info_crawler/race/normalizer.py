@@ -1,4 +1,5 @@
 import re
+from types import ClassMethodDescriptorType
 from typing import List
 from pandas.core.frame import DataFrame
 
@@ -87,72 +88,80 @@ class RaceInfoNormalizer:
 class RaceDetailsNormalizer:
     @classmethod
     def normalize_arrival_orders(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["着順"])
 
     @classmethod
     def normalize_box_numbers(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["枠番"])
 
     @classmethod
     def normalize_horse_numbers(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["馬番"])
 
     @classmethod
     def normalize_horse_names(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["馬名"])
 
     @classmethod
     def normalize_horse_sexes(cls, race_details: DataFrame) -> List[str]:
-        pass
+        race_details["sex"] = race_details["性齢"].replace("\d","",regex=True)
+        return list(race_details["sex"])
 
     @classmethod
     def normalize_horse_ages(cls, race_details: DataFrame) -> List[str]:
-        pass
+        race_details["age"] = race_details["性齢"].str.extract("(\d+)")
+        return list(race_details["age"])
+
+    @classmethod
+    def normalize_jockey_weights(cls, race_details: DataFrame) -> List[str]:
+        return list(race_details["斤量"])
 
     @classmethod
     def normalize_jockey_names(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["騎手"])
 
     @classmethod
     def normalize_goal_times(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["タイム"])
 
     @classmethod
     def normalize_goal_margins(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["着差"])
 
     @classmethod
     def normalize_order_transitions(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["通過"])
 
     @classmethod
     def normalize_half_times(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["上り"])
 
     @classmethod
     def normalize_odds(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["単勝"])
 
     @classmethod
     def normalize_popularities(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["人気"])
 
     @classmethod
     def normalize_horse_weights(cls, race_details: DataFrame) -> List[str]:
-        pass
+        race_details["horse_weight"] = race_details["馬体重"].str.extract("(\d+)")
+        return list(race_details["horse_weight"])
 
     @classmethod
     def normalize_horse_weight_diffs(cls, race_details: DataFrame) -> List[str]:
-        pass
+        race_details["horse_weight_diff"] = race_details["馬体重"].str.extract("\((\W*\d+)\)")
+        return list(race_details["horse_weight_diff"])
 
     @classmethod
     def normalize_trainer_names(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["調教師"])
 
     @classmethod
     def normalize_horse_owners(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["馬主"])
 
     @classmethod
     def normalize_earn_prizes(cls, race_details: DataFrame) -> List[str]:
-        pass
+        return list(race_details["賞金(万円)"])
