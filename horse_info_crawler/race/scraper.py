@@ -9,6 +9,12 @@ import requests
 
 from horse_info_crawler.components import logger
 
+class DetailPageNotFoundError(Exception):
+    """
+    レース詳細ページが見つからない場合のエラー
+    """
+    pass
+
 NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
 
 
