@@ -21,7 +21,7 @@ NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
 @dataclass
 class RaceInfoListingPageScraper:
     LISTING_PAGE_START_URLS = '%s?%s' % (
-        NETKEIBA_BASE_URL, urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC))
+        NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
     parser: RaceInfoListingPageParser
 
     def get(self, listing_page_url: str) -> ListingPage:

@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+import urllib
+from horse_info_crawler.race.repository import RaceInfoRepository
 from horse_info_crawler.race.normalizer import InvalidFormatError, UnsupportedFormatError
 from urllib.parse import urlencode
 from horse_info_crawler.race.domain import RaceInfo, ShapedRaceData
@@ -24,33 +26,31 @@ class CrawlRaceHistoriesUsecase:
 
     def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
         race_histories = []
-        for listing_page_base_url in self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS:
-            logger.info(f"listing_page_base_url: {listing_page_base_url}")
+        # リスティングページをクロールして物件詳細の URL 一覧を取得する
+        listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
+        while listing_page_url:
+            listing_page = self.race_info_listing_page_scraper.get(listing_page_url)
+            logger.info(
+                f"listing_page_url: {listing_page_url}, race_info_page_urls count: {len(listing_page.race_info_page_urls)}")
 
-            # リスティングページをクロールして物件詳細の URL 一覧を取得する
-            listing_page_url = listing_page_base_url
-            while listing_page_url:
-                listing_page = self.race_info_listing_page_scraper.get(listing_page_url)
-                logger.info(
-                    f"listing_page_url: {listing_page_url}, race_info_page_urls count: {len(listing_page.race_info_page_urls)}")
+            # レース詳細ページにアクセスして、レースのデータを取得する
+            for race_info_page_url in listing_page.race_info_page_urls:
+                # CSV にアップロードするデータ構造をいれる
+                # Errorが発生したら該当PropertyはSkipする
+                try:
+                    race_histories.append(self._get_race_info(race_info_page_url))
+                except DetailPageNotFoundError as e:
+                    logger.warning(f"Skip getting property:{e}")
+                    # TODO: sentryとかエラー監視ツール入れる
 
-                # レース詳細ページにアクセスして、レースのデータを取得する
-                for race_info_page_url in listing_page.race_info_page_urls:
-                    # CSV にアップロードするデータ構造をいれる
-                    # Errorが発生したら該当PropertyはSkipする
-                    try:
-                        race_histories.append(self._get_race_info(race_info_page_url))
-                    except DetailPageNotFoundError as e:
-                        logger.warning(f"Skip getting property:{e}")
-                        # TODO: sentryとかエラー監視ツール入れる
+                if crawl_limit and len(race_histories) >= crawl_limit:
+                    # crawl_limit の件数に達したらクロールを終了する
+                    logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
+                    return race_histories
 
-                    if crawl_limit and len(race_histories) >= crawl_limit:
-                        # crawl_limit の件数に達したらクロールを終了する
-                        logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
-                        return race_histories
-
-                # next_page_url がある場合は次ページへアクセス
-                listing_page_url = '%s?%s' % (NETKEIBA_BASE_URL, urlencode(listing_page.next_page_post_parameter))     
+            # next_page_url がある場合は次ページへアクセス
+            print(listing_page.next_page_post_parameter)
+            listing_page_url = '%s?%s' % (NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(listing_page.next_page_post_parameter)))    
         
         logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
         return race_histories

@@ -2,14 +2,16 @@ import csv
 import dataclasses
 
 from pandas.core.frame import DataFrame
-from horse_info_crawler.race.domain import ShapedRaceData
+from horse_info_crawler.race.domain import ShapedRaceData, ShapedRaceDetailInfo
 import io
 from datetime import datetime
 from typing import Any, List
 import os
 import pandas as pd
+import numpy as np
 
 class DataFormatter:
+    # TODO: この部分全体的に結構不格好。直したい。List[str]を連結してDataFrameにしてからそこに基礎データを追加していくようにしている
     def data_to_df(self, shaped_race_data_list: List[ShapedRaceData]) -> DataFrame:
         """
         ShapedRaceDataのリストをdataframeに変換する
@@ -19,37 +21,38 @@ class DataFormatter:
         """
         concat_list = []
         for shaped_race_data in shaped_race_data_list:
-            elem_df = shaped_race_data.shaped_race_detail_info
-            for basic_info in shaped_race_data.shaped_race_info.__dict__.keys:
-                elem_df[basic_info] = shaped_race_data.shaped_race_info.__dict__[basic_info]
+            elem_df = self.shaped_detail_info_list_to_df(shaped_race_data.shaped_race_detail_info)
+            race_data_dict = shaped_race_data.shaped_race_info.__dict__
+            for basic_info in race_data_dict.keys():
+                elem_df[basic_info] = race_data_dict[basic_info]
             concat_list.append(elem_df)
 
         shaped_race_history_df = pd.concat(concat_list)
         return shaped_race_history_df
 
-    def _dict_to_csv(self, header: List[str], rows: List[dict]):
-        with io.StringIO() as f:
-            writer = csv.DictWriter(f, header, lineterminator="\n")
-            writer.writeheader()
-            for row in rows:
-                writer.writerow(row)
-            return f.getvalue()
+    def shaped_detail_info_list_to_df(self, shape_race_detail_info: ShapedRaceDetailInfo) -> DataFrame:
+        elem_list = []
+        for elem in shape_race_detail_info.__dict__.values():
+            elem_list.append(elem)
+        # TODO: np.arrayに変換してから転置してる、ちょっと不格好
+        elem_list = np.array(elem_list).T
+        shaped_detail_info_df = pd.DataFrame(elem_list, columns=shape_race_detail_info.__dict__.keys())
+        return shaped_detail_info_df
 
 
 @dataclasses.dataclass
-class PropertyDataRepository:
+class RaceInfoRepository:
     formatter: DataFormatter
-    crawled_data_base_dir: str
-    target_crawled_data_base_dir: str
     current_datetime: datetime
 
     def save_shaped_properties(self, shaped_race_info_list: List[ShapedRaceData]):
         # shaped_race_data を dataframeに変換する
         df_data = self.formatter.data_to_df(shaped_race_info_list)
-        current_date_ymd = self.current_datetime.strftime("%Y/%m/%d")
+        current_date_ymd = self.current_datetime.strftime("%Y-%m-%d")
         
-        os.makedirs(f"../../data/race_histories/{current_date_ymd}", exist_ok=True)
+        os.makedirs(f"./horse_info_crawler/race/data/race_histories/{current_date_ymd}", exist_ok=True)
 
-        save_path = f"../../data/race_histories/{current_date_ymd}/shaped_race_history.csv"
+        save_path = f"./horse_info_crawler/race/data/race_histories/{current_date_ymd}/shaped_race_history.csv"
         # データフレームを CSV として ローカルに保存する
         df_data.to_csv(save_path, index=False)
+

@@ -52,9 +52,6 @@ class ShapedRaceInfo:
     held_date_number: str
     # 備考
     explanation: str
-    # レース詳細情報
-    race_details: DataFrame
-
 
 @dataclass(frozen=True)
 class ShapedRaceDetailInfo:

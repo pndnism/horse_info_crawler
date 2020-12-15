@@ -41,10 +41,8 @@ class RaceInfoShaper:
             held_date_number=self.race_info_normalizer.normalize_held_date_number(
                 race_info.held_info),
             explanation=self.race_info_normalizer.normalize_explanation(
-                race_info.held_info),
-            race_details=self.race_info_normalizer.normalize_race_details(
-                race_info.race_details),
-        )
+                race_info.held_info)
+                )
 
     def shape_race_detail_info(self, race_info: RaceInfo):
         return ShapedRaceDetailInfo(
