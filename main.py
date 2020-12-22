@@ -1,6 +1,7 @@
 from typing import Optional
 import click
 from horse_info_crawler.race import usecases as race_usecases
+import sentry_sdk
 
 
 @click.group()
@@ -21,4 +22,9 @@ def crawl_race_history(crawl_limit: Optional[int]):
     click.echo("crawl_cbre_properties Completed")
 
 if __name__ == '__main__':
+    sentry_sdk.init(
+    "https://317bab5f08b64718afadc66afe0a0cce@o495078.ingest.sentry.io/5567225",
+    traces_sample_rate=1.0
+    )
     main()
+    

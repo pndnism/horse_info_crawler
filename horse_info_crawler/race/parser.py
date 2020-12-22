@@ -50,7 +50,7 @@ class RaceInfoParser:
         )
 
     def _parse_name(self, soup: BeautifulSoup) -> str:
-        if soup.find_all("h1") is None:
+        if len(soup.find_all("h1")) == 1:
             raise UnsupportedFormatError("name not found.")
         return soup.find_all("h1")[1].text
 

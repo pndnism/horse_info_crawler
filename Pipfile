@@ -16,6 +16,7 @@ boto3 = "*"
 click = "*"
 selenium = "*"
 lxml = "*"
+sentry-sdk = "*"
 
 [requires]
 python_version = "3.8.1"
