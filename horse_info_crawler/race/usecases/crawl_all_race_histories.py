@@ -38,7 +38,10 @@ class CrawlRaceHistoriesUsecase:
                 # CSV にアップロードするデータ構造をいれる
                 # Errorが発生したら該当PropertyはSkipする
                 try:
-                    race_histories.append(self._get_race_info(race_info_page_url))
+                    if self._get_race_info(race_info_page_url):
+                        race_histories.append(self._get_race_info(race_info_page_url))
+                    else:
+                        raise DetailPageNotFoundError("table not found.")
                 except DetailPageNotFoundError as e:
                     logger.warning(f"Skip getting property:{e}")
                     # TODO: sentryとかエラー監視ツール入れる
@@ -63,6 +66,8 @@ class CrawlRaceHistoriesUsecase:
             Returns:
             """
             race_info = self.race_info_scraper.get(race_info_url)
+            if race_info.race_details is None:
+                return None
 
             # CSV にアップロードするデータ構造をいれる
             return race_info

@@ -1,3 +1,4 @@
+from horse_info_crawler.race.normalizer import UnsupportedFormatError
 from pandas.core.frame import DataFrame
 import pandas as pd
 from horse_info_crawler.race.domain import RaceInfo, ListingPage
@@ -39,8 +40,7 @@ class RaceInfoParser:
     """
 
     def parse(self, html) -> RaceInfo:
-        soup = BeautifulSoup(html, "html.parser")
-
+        soup = BeautifulSoup(html, "lxml")
         return RaceInfo(
             name=self._parse_name(soup),
             race_number=self._parse_race_number(soup),
@@ -50,6 +50,8 @@ class RaceInfoParser:
         )
 
     def _parse_name(self, soup: BeautifulSoup) -> str:
+        if soup.find_all("h1") is None:
+            raise UnsupportedFormatError("name not found.")
         return soup.find_all("h1")[1].text
 
     def _parse_race_number(self, soup: BeautifulSoup) -> str:
@@ -70,9 +72,12 @@ class RaceInfoParser:
 
     def _parse_race_details(self, soup: BeautifulSoup) -> DataFrame:
         table = soup.find("table", summary="レース結果")
+        if table is None:
+            return None
         rows = table.find_all("tr")
         columns = [v.text.replace('\n', '') for v in rows[0].find_all('th')]
         df = pd.DataFrame(columns=columns)
+        # TODO: DataFrameにせず保持する
         # 全行のうちのある行成分について
         for i in range(len(rows)):
             # 全ての<td>タグ（セルデータ）を取得しtdsに格納、リスト化
