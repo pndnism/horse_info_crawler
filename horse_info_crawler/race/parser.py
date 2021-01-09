@@ -51,21 +51,30 @@ class RaceInfoParser:
 
     def _parse_name(self, soup: BeautifulSoup) -> str:
         if len(soup.find_all("h1")) == 1:
-            raise UnsupportedFormatError("name not found.")
+            return None
+            #raise UnsupportedFormatError("name not found.")
         return soup.find_all("h1")[1].text
 
     def _parse_race_number(self, soup: BeautifulSoup) -> str:
+        if soup.find("dl", class_="racedata fc") is None:
+            return None
         race_number_elem = soup.find("dl", class_="racedata fc").find("dt")
         race_number = re.sub("\n", "", race_number_elem.text)
         return race_number
 
     def _course_run_info(self, soup: BeautifulSoup) -> str:
-        course_run_info_elem = soup.find("diary_snap_cut").find("span")
-        course_run_info = re.sub(u"\xa0", " ", course_run_info_elem.text)
+        course_run_info_elem = soup.find("diary_snap_cut")
+        if course_run_info_elem is None:
+            return None
+        if course_run_info_elem.find("span") is None:
+            return None
+        course_run_info = re.sub(u"\xa0", " ", course_run_info_elem.find("span").text)
         return course_run_info
 
     def _parse_held_info(self, soup: BeautifulSoup) -> str:
         held_info_elem = soup.find("p", class_="smalltxt")
+        if held_info_elem is None:
+            return None
         held_info = re.sub("\xa0", "", held_info_elem.text)
         held_info = re.sub(" \Z", "", held_info)
         return held_info

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from os import name
 import urllib
 from horse_info_crawler.race.repository import RaceInfoRepository
 from horse_info_crawler.race.normalizer import InvalidFormatError, UnsupportedFormatError
@@ -43,7 +44,7 @@ class CrawlRaceHistoriesUsecase:
                     else:
                         raise DetailPageNotFoundError("table not found.")
                 except DetailPageNotFoundError as e:
-                    logger.warning(f"Skip getting property:{e}")
+                    logger.warning(f"Skip getting race:{e}")
                     # TODO: sentryとかエラー監視ツール入れる
 
                 if crawl_limit and len(race_histories) >= crawl_limit:
