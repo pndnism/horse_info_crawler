@@ -1,5 +1,5 @@
 from horse_info_crawler.race.domain import ListingPage
-from horse_info_crawler.race.scraper import RaceInfoListingPageScraper
+from horse_info_crawler.race.scraper import RaceInfoListingPageScraper, RaceInfoScraper
 from horse_info_crawler.race.parser import RaceInfoListingPageParser
 from unittest import TestCase
 from unittest.mock import Mock
@@ -27,3 +27,8 @@ class TestCrawlRaceHistoriesUsecase(TestCase):
                 "/race/list/2",
             ]
         )
+
+        detail_page_requester_mock = Mock(spec=RaceInfoScraper)
+
+        test_race_1 = helper.create_property(1)
+        test_race_2 = helper.create_property(2)

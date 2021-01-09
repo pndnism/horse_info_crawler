@@ -1,4 +1,3 @@
-from horse_info_crawler.race.scraper import NETKEIBA_BASE_URL
 from horse_info_crawler.race.normalizer import UnsupportedFormatError
 from pandas.core.frame import DataFrame
 import pandas as pd
@@ -27,7 +26,7 @@ class RaceInfoListingPageParser:
             RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = RACE_LISTING_PAGE_POST_INPUT_DIC.get(
                 "page") + 1
             next_page_url = '%s?%s' % (
-                NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
+                self.NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
 
         race_info_page_urls = [
             i.get("href") for i in soup.find_all(href=re.compile("/race/\d"))]

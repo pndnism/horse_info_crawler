@@ -22,8 +22,7 @@ class TestRaceInfoLisingPageScraper(TestCase):
                       body="test html", status=200)
 
         parser_mock = Mock(spec=RaceInfoListingPageParser)
-        expected_listing_page = ListingPage(next_page_post_parameter=None,
-                                            next_page_element=None,
+        expected_listing_page = ListingPage(next_page_url=None,
                                             race_info_page_urls=[])
 
         parser_mock.parse.return_value = expected_listing_page
@@ -51,8 +50,7 @@ class TestRaceInfoLisingPageScraper(TestCase):
                       body="test html", status=200)
 
         parser_mock = Mock(spec=RaceInfoListingPageParser)
-        expected_listing_page = ListingPage(next_page_post_parameter=None,
-                                            next_page_element=None,
+        expected_listing_page = ListingPage(next_page_url=None,
                                             race_info_page_urls=[])
 
         parser_mock.parse.return_value = expected_listing_page
