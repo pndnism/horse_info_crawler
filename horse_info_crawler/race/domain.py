@@ -21,8 +21,7 @@ class RaceInfo:
 
 @dataclass(frozen=True)
 class ListingPage:
-    next_page_post_parameter: Optional[str]
-    next_page_element: Optional[str]
+    next_page_url: Optional[str]
     race_info_page_urls: List[str]
 
 
