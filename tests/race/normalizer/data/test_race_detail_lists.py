@@ -9,6 +9,7 @@ NORMALIZED_HORSE_NAMES_LIST = ['ベッサラビア',
                                 'オウケノヒメミコ',
                                 'プチジュラシック',
                                 'シャイニードラード']
+NORMALIZED_HORSE_IDS_LIST = []
 NORMALIZED_HORSE_SEXES_LIST = ['牡', '牝', '牡', 'セ', '牡', '牝', '牡', '牡']
 NORMALIZED_HORSE_AGES_LIST = ['3', '3', '3', '3', '3', '6', '3', '5']
 NORMALIZED_JOCKEY_WEIGHTS_LIST = ['56', '50', '56', '56', '56', '54', '56', '56']

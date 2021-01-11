@@ -103,6 +103,10 @@ class RaceDetailsNormalizer:
         return list(race_details["馬名"])
 
     @classmethod
+    def normalize_horse_ids(cls, race_details: DataFrame) -> List[str]:
+        return list(race_details["馬ID"])
+
+    @classmethod
     def normalize_horse_sexes(cls, race_details: DataFrame) -> List[str]:
         race_details["sex"] = race_details["性齢"].replace("\d","",regex=True)
         return list(race_details["sex"])

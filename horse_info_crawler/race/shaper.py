@@ -54,36 +54,36 @@ class RaceInfoShaper:
                 race_detail_info.horse_numbers),
             horse_names=self.race_details_normalizer.normalize_horse_names(
                 race_detail_info.horse_info),
-            horse_names=self.race_details_normalizer.normalize_horse_names(
+            horse_ids=self.race_details_normalizer.normalize_horse_ids(
                 race_detail_info.horse_info),
             horse_sexes=self.race_details_normalizer.normalize_horse_sexes(
-                race_detail_info.race_details),
+                race_detail_info.horse_ages_and_sexes),
             horse_ages=self.race_details_normalizer.normalize_horse_ages(
-                race_detail_info.race_details),
+                race_detail_info.horse_ages_and_sexes),
             jockey_weights=self.race_details_normalizer.normalize_jockey_weights(
-                race_detail_info.race_details),
+                race_detail_info.jockey_weights),
             jockey_names=self.race_details_normalizer.normalize_jockey_names(
-                race_detail_info.race_details),
+                race_detail_info.jockey_names),
             goal_times=self.race_details_normalizer.normalize_goal_times(
-                race_detail_info.race_details),
+                race_detail_info.goal_times),
             goal_margins=self.race_details_normalizer.normalize_goal_margins(
-                race_detail_info.race_details),
+                race_detail_info.goal_margins),
             order_transitions=self.race_details_normalizer.normalize_order_transitions(
-                race_detail_info.race_details),
+                race_detail_info.order_transitions),
             half_times=self.race_details_normalizer.normalize_half_times(
-                race_detail_info.race_details),
+                race_detail_info.half_times),
             odds=self.race_details_normalizer.normalize_odds(
-                race_detail_info.race_details),
+                race_detail_info.odds),
             popularities=self.race_details_normalizer.normalize_popularities(
-                race_detail_info.race_details),
+                race_detail_info.popularities),
             horse_weights=self.race_details_normalizer.normalize_horse_weights(
-                race_detail_info.race_details),
+                race_detail_info.horse_weights),
             horse_weight_diffs=self.race_details_normalizer.normalize_horse_weight_diffs(
-                race_detail_info.race_details),
+                race_detail_info.horse_weights),
             trainer_names=self.race_details_normalizer.normalize_trainer_names(
-                race_detail_info.race_details),
+                race_detail_info.trainer_names),
             horse_owners=self.race_details_normalizer.normalize_horse_owners(
-                race_detail_info.race_details),
+                race_detail_info.horse_owners),
             earn_prizes=self.race_details_normalizer.normalize_earn_prizes(
-                race_detail_info.race_details),
+                race_detail_info.earn_prizes),
         )
