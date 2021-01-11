@@ -98,6 +98,8 @@ class ShapedRaceDetailInfo:
     horse_numbers: List[str]
     # 馬名
     horse_names: List[str]
+    # 馬ID
+    horse_id: List[str]
     # 性別
     horse_sexes: List[str]
     # 年齢
