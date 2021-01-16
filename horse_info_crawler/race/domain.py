@@ -44,8 +44,6 @@ class RaceDetailInfo:
     popularities: List[str]
     # 馬体重
     horse_weights: List[str]
-    # 馬体重変化
-    horse_weight_diffs: List[str]
     # 調教師
     trainer_names: List[str]
     # 馬主
@@ -99,7 +97,7 @@ class ShapedRaceDetailInfo:
     # 馬名
     horse_names: List[str]
     # 馬ID
-    horse_id: List[str]
+    horse_ids: List[str]
     # 性別
     horse_sexes: List[str]
     # 年齢

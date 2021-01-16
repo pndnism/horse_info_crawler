@@ -65,8 +65,8 @@ class TestRaceInfoNormalizer(TestCase):
             '2019年11月24日 5回東京8日目 3歳以上オープン  (国際)(指)(定量)'), '3歳以上オープン(国際)(指)(定量)')
 
 class TestRaceDetailsNormalizer(TestCase):
-    with open(f"{os.path.dirname(__file__)}/data/test_race_info_dict.pickle", mode='rb') as f:
-        source_dict = pickle.load(f)
+    pickle_path = f"{os.path.dirname(__file__)}/data/test_race_info_dict.pickle"
+    source_dict = pd.read_pickle(pickle_path)
 
     def test_normalize_arrival_orders(self):
         self.assertEqual(RaceDetailsNormalizer.normalize_arrival_orders(self.source_dict["着順"]), NORMALIZED_ARRIVAL_ORDERS_LIST)
