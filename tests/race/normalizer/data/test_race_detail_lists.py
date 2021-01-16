@@ -1,43 +1,20 @@
-NORMALIZED_ARRIVAL_ORDERS_LIST = ['1','2','3','4','5','6','7','8']
-NORMALIZED_BOX_NUMBERS_LIST = ['5','2','6','3','4','1','8','7']
-NORMALIZED_HORSE_NUMBERS_LIST = ['5','2','6','3','4','1','8','7']
-NORMALIZED_HORSE_NAMES_LIST = ['ベッサラビア',
-                                'サフランハピネス',
-                                'クリノビックスター',
-                                'カーヴィーレーザー',
-                                'ベルベストスター',
-                                'オウケノヒメミコ',
-                                'プチジュラシック',
-                                'シャイニードラード']
-NORMALIZED_HORSE_IDS_LIST = []
-NORMALIZED_HORSE_SEXES_LIST = ['牡', '牝', '牡', 'セ', '牡', '牝', '牡', '牡']
-NORMALIZED_HORSE_AGES_LIST = ['3', '3', '3', '3', '3', '6', '3', '5']
-NORMALIZED_JOCKEY_WEIGHTS_LIST = ['56', '50', '56', '56', '56', '54', '56', '56']
-NORMALIZED_JOCKEY_NAMES_LIST = ['関本淳', '関本玲花', '岩本怜', '木村暁', '村上忍', '大坪慎', '山本政聡', '鈴木祐']
-NORMALIZED_GOAL_TIMES_LIST = ['1:15.2',
-                                '1:16.2',
-                                '1:16.3',
-                                '1:16.5',
-                                '1:17.7',
-                                '1:17.9',
-                                '1:18.8',
-                                '1:18.9']
-NORMALIZED_GOAL_MARGINS_LIST = ['', '6', 'クビ', '1', '7', '1', '6', '3/4']
-NORMALIZED_ORDER_TRANSITIONS_LIST = ['1-1', '5-4', '7-6', '3-3', '2-2', '8-8', '6-7', '4-5']
-NORMALIZED_HALF_TIMES_LIST = ['39.0', '38.6', '38.2', '39.7', '41.3', '39.3', '41.1', '42.0']
-NORMALIZED_ODDS_LIST = ['1.6', '13.5', '3.7', '16.7', '7.6', '114.4', '29.1', '11.9']
-NORMALIZED_POPULARITIES_LIST = ['1', '5', '2', '6', '3', '8', '7', '4']
-NORMALIZED_HORSE_WEIGHTS_LIST = ['484', '424', '479', '443', '462', '457', '505', '529']
-NORMALIZED_HORSE_WEIGHT_DIFFS_LIST = ['+22', '-3', '+1', '-13', '+3', '+4', '+14', '+7']
-NORMALIZED_TRAINER_NAMES_LIST = ['[地]斉藤雄一',
-                                '[地]佐藤祐司',
-                                '[地]三野宮通',
-                                '[地]千葉博次',
-                                '[地]千葉幸喜',
-                                '[地]橘友和',
-                                '[地]三野宮通',
-                                '[地]晴山厚司']
-NORMALIZED_HORSE_OWNERS_LIST = ['森田藤治', '森田徹', '（株）アプエンテ', '吉田啓', '宮崎俊也', '山口良成', '男澤喜惠子', '小林昌志']
-NORMALIZED_EARN_PRIZES_LIST = ['25.0', '7.0', '4.0', '2.5', '1.5', '', '', '']
-
-
+NORMALIZED_ARRIVAL_ORDERS_LIST = ['1', '2', '3', '4', '5', '6', '7', '8']
+NORMALIZED_BOX_NUMBERS_LIST = ['3', '2', '4', '6', '5', '8', '7', '1']
+NORMALIZED_HORSE_NUMBERS_LIST = ['3', '2', '4', '6', '5', '8', '7', '1']
+NORMALIZED_HORSE_NAMES_LIST = ['サニーシェルブール', 'チャーミングポポ', 'アービター', 'ナリノレッドスター', 'コスモグラシエ', 'ミツアキトン', 'エムオーシャルマン', 'チュウワエンペラー']
+NORMALIZED_HORSE_IDS_LIST = ['2017110039', '2017105812', '2017105215', '2015104492', '2017101980', '2013103314', '2016103784', '2016103803']
+NORMALIZED_HORSE_SEXES_LIST = ['セ', '牝', 'セ', '牡', '牝', '牝', '牝', '牡']
+NORMALIZED_HORSE_AGES_LIST = ['4', '4', '4', '6', '4', '8', '5', '5']
+NORMALIZED_JOCKEY_WEIGHTS_LIST = ['56', '54', '56', '56', '54', '51', '54', '56']
+NORMALIZED_JOCKEY_NAMES_LIST = ['吉井友彦', '大原浩司', '向山牧', '松本剛志', '森島貴之', '長江慶悟', '池田敏樹', '馬渕繁治']
+NORMALIZED_GOAL_TIMES_LIST = ['1:30.4', '1:31.4', '1:31.7', '1:32.1', '1:32.4', '1:33.3', '1:34.3', '1:34.9']
+NORMALIZED_GOAL_MARGINS_LIST = ['', '5', '1.1/2', '2', '1.1/2', '4', '5', '3']
+NORMALIZED_ORDER_TRANSITIONS_LIST = ['3-3-2', '1-1-1', '5-5-4', '2-2-3', '7-6-5', '8-8-7', '4-4-6', '6-7-8']
+NORMALIZED_HALF_TIMES_LIST = ['39.7', '41.4', '39.9', '41.8', '40.2', '39.9', '43.2', '42.3']
+NORMALIZED_ODDS_LIST = ['3.1', '5.4', '6.5', '1.8', '37.3', '138.7', '114.6', '118.2']
+NORMALIZED_POPULARITIES_LIST = ['2', '3', '4', '1', '5', '8', '6', '7']
+NORMALIZED_HORSE_WEIGHTS_LIST = ['444', '472', '455', '449', '433', '423', '444', '493']
+NORMALIZED_HORSE_WEIGHT_DIFFS_LIST = ['-14', '-1', '+3', '-3', '-2', '-1', '-1', '-1']
+NORMALIZED_TRAINER_NAMES_LIST = ['[地]森山英雄', '[地]森山英雄', '[地]後藤正義', '[地]加藤幸保', '[地]東川公則', '[地]後藤正義', '[地]湯前良人', '[地]加藤幸保']
+NORMALIZED_HORSE_OWNERS_LIST = ['豊原純弥', '村下義等', '紙谷洋一', '成塚清志', '杉浦和也', '山本光明', '遠藤喜和', '中西忍']
+NORMALIZED_EARN_PRIZES_LIST = ['27.0', '8.1', '4.1', '2.7', '1.4', '', '', '']
