@@ -88,80 +88,87 @@ class RaceInfoNormalizer:
 class RaceDetailsNormalizer:
     @classmethod
     def normalize_arrival_orders(cls, arrival_orders: List[str]) -> List[str]:
-        pass
+        return [i.text for i in arrival_orders]
 
     @classmethod
     def normalize_box_numbers(cls, box_numbers: List[str]) -> List[str]:
-        pass
+        return [i.text for i in box_numbers]
 
     @classmethod
     def normalize_horse_numbers(cls, horse_numbers: List[str]) -> List[str]:
-        pass
+        return [i.text for i in horse_numbers]
 
     @classmethod
     def normalize_horse_names(cls, horse_info: List[str]) -> List[str]:
-        pass
+        raw_list = [i.text for i in horse_info]
+        return [raw.replace("\n", "") for raw in raw_list]
 
     @classmethod
     def normalize_horse_ids(cls, horse_info: List[str]) -> List[str]:
-        pass
+        raw_list = [i.find("a").get("href") for i in horse_info]
+        return [re.findall("(\d+)", raw)[0] for raw in raw_list]
 
     @classmethod
     def normalize_horse_sexes(cls, horse_ages_and_sexes: List[str]) -> List[str]:
-        pass
+        return [re.findall("(セ|牝|牡)",i.text)[0] for i in horse_ages_and_sexes]
 
     @classmethod
     def normalize_horse_ages(cls, horse_ages_and_sexes: List[str]) -> List[str]:
-        pass
+        return [re.findall("(\d+)",i.text)[0] for i in horse_ages_and_sexes]
 
     @classmethod
     def normalize_jockey_weights(cls, jockey_weights: List[str]) -> List[str]:
-        pass
+        return [re.findall("(\d+)",i.text)[0] for i in jockey_weights]
 
     @classmethod
     def normalize_jockey_names(cls, jockey_names: List[str]) -> List[str]:
-        pass
+        raw_list = [i.text for i in jockey_names]
+        return [raw.replace("\n", "") for raw in raw_list]
 
     @classmethod
     def normalize_goal_times(cls, goal_times: List[str]) -> List[str]:
-        pass
+        return [i.text for i in goal_times]
 
     @classmethod
     def normalize_goal_margins(cls, goal_margins: List[str]) -> List[str]:
-        pass
+        return [i.text for i in goal_margins]
 
     @classmethod
     def normalize_order_transitions(cls, order_transitions: List[str]) -> List[str]:
-        pass
+        return [i.text for i in order_transitions]
 
     @classmethod
     def normalize_half_times(cls, half_times: List[str]) -> List[str]:
-        pass
+        return [i.text for i in half_times]
 
     @classmethod
     def normalize_odds(cls, odds: List[str]) -> List[str]:
-        pass
+        return [i.text for i in odds]
 
     @classmethod
     def normalize_popularities(cls, popularities: List[str]) -> List[str]:
-        pass
+        return [i.text for i in popularities]
 
     @classmethod
     def normalize_horse_weights(cls, horse_weights: List[str]) -> List[str]:
-        pass
+        raw_list = [i.text for i in horse_weights]
+        return [re.findall("(\d+)\(",raw)[0] for raw in raw_list]
 
     @classmethod
     def normalize_horse_weight_diffs(cls, horse_weights: List[str]) -> List[str]:
-        pass
+        raw_list = [i.text for i in horse_weights]
+        return [re.findall("[(]([\+*|\-*]\w+)[)]",raw)[0] for raw in raw_list]
 
     @classmethod
     def normalize_trainer_names(cls, trainer_names: List[str]) -> List[str]:
-        pass
+        raw_list = [i.text for i in trainer_names]
+        return [raw.replace("\n", "") for raw in raw_list]
 
     @classmethod
     def normalize_horse_owners(cls, horse_owners: List[str]) -> List[str]:
-        pass
+        raw_list = [i.text for i in horse_owners]
+        return [raw.replace("\n", "") for raw in raw_list]
 
     @classmethod
     def normalize_earn_prizes(cls, earn_prizes: List[str]) -> List[str]:
-        pass
+        return [i.text for i in earn_prizes]
