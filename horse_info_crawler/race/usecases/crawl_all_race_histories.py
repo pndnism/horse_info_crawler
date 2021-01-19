@@ -22,7 +22,7 @@ class CrawlRaceHistoriesUsecase:
         race_histories = self._crawl_race_histories(crawl_limit)
 
         # race_histories を CSV に変換して ローカルに保存する
-        self.race_info_repository.save_shaped_properties(self._shape_race_infos(race_histories))
+        self.race_info_repository.save_shaped_race_info(self._shape_race_infos(race_histories))
         logger.info("End crawl_race_histories.")
 
     def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
@@ -53,8 +53,8 @@ class CrawlRaceHistoriesUsecase:
                     return race_histories
 
             # next_page_url がある場合は次ページへアクセス
-            print(listing_page.next_page_post_parameter)
-            listing_page_url = '%s?%s' % (NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(listing_page.next_page_post_parameter)))    
+            print(listing_page.next_page_url)
+            listing_page_url = listing_page.next_page_url 
         
         logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
         return race_histories
@@ -67,7 +67,7 @@ class CrawlRaceHistoriesUsecase:
             Returns:
             """
             race_info = self.race_info_scraper.get(race_info_url)
-            if race_info.race_details is None:
+            if race_info.race_detail_info is None:
                 return None
 
             # CSV にアップロードするデータ構造をいれる
