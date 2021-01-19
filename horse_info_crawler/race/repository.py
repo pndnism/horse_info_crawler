@@ -45,7 +45,7 @@ class RaceInfoRepository:
     formatter: DataFormatter
     current_datetime: datetime
 
-    def save_shaped_properties(self, shaped_race_info_list: List[ShapedRaceData]):
+    def save_shaped_race_info(self, shaped_race_info_list: List[ShapedRaceData]):
         # shaped_race_data を dataframeに変換する
         df_data = self.formatter.data_to_df(shaped_race_info_list)
         current_date_ymd = self.current_datetime.strftime("%Y-%m-%d")

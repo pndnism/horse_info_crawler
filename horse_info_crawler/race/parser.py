@@ -1,38 +1,40 @@
 from horse_info_crawler.race.normalizer import UnsupportedFormatError
 from pandas.core.frame import DataFrame
 import pandas as pd
-from horse_info_crawler.race.domain import RaceInfo, ListingPage
+from horse_info_crawler.race.domain import RaceDetailInfo, RaceInfo, ListingPage
 from horse_info_crawler.race.config import RACE_LISTING_PAGE_POST_INPUT_DIC
 from bs4 import BeautifulSoup
 import re
 from typing import Optional
 from horse_info_crawler.components.logger import warning
-
+import urllib
+from urllib.parse import urlencode
 
 class RaceInfoListingPageParser:
     """
     取得したHTMLをパースして構造化したデータに変換する
     """
+    NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
 
     def parse(self, html: str) -> ListingPage:
         soup = BeautifulSoup(html, "html.parser")
 
-        next_page_post_parameter = None
+
+        next_page_url = None
         next_page_element = soup.select_one("div.pager a:contains('次')")
         if next_page_element:
             RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = RACE_LISTING_PAGE_POST_INPUT_DIC.get(
                 "page") + 1
-            next_page_post_parameter = RACE_LISTING_PAGE_POST_INPUT_DIC
+            next_page_url = '%s?%s' % (
+                self.NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
 
         race_info_page_urls = [
             i.get("href") for i in soup.find_all(href=re.compile("/race/\d"))]
 
         return ListingPage(
-            next_page_element=next_page_element,
-            next_page_post_parameter=next_page_post_parameter,
+            next_page_url=next_page_url,
             race_info_page_urls=race_info_page_urls
         )
-
 
 class RaceInfoParser:
     """
@@ -46,7 +48,7 @@ class RaceInfoParser:
             race_number=self._parse_race_number(soup),
             course_run_info=self._course_run_info(soup),
             held_info=self._parse_held_info(soup),
-            race_details=self._parse_race_details(soup)
+            race_detail_info=self._parse_race_details(soup)
         )
 
     def _parse_name(self, soup: BeautifulSoup) -> str:
@@ -79,24 +81,36 @@ class RaceInfoParser:
         held_info = re.sub(" \Z", "", held_info)
         return held_info
 
-    def _parse_race_details(self, soup: BeautifulSoup) -> DataFrame:
+    def _parse_race_details(self, soup: BeautifulSoup) -> RaceDetailInfo:
         table = soup.find("table", summary="レース結果")
         if table is None:
             return None
-        rows = table.find_all("tr")
-        columns = [v.text.replace('\n', '') for v in rows[0].find_all('th')]
-        df = pd.DataFrame(columns=columns)
-        # TODO: DataFrameにせず保持する
-        # 全行のうちのある行成分について
-        for i in range(len(rows)):
-            # 全ての<td>タグ（セルデータ）を取得しtdsに格納、リスト化
-            tds = rows[i].find_all('td')
-            # tdsのデータ数がカラム数に一致しない場合（ブランク）などは排除し、
-            if len(tds) == len(columns):
-                # （ある行成分の）全セルデータをテキスト成分としてvaluesに格納、リスト化
-                values = [td.text.replace('\n', '').replace(
-                    '\xa0', ' ') for td in tds]
-                # valuesをpd.seriesデータに変換、データフレームに結合
-                df = df.append(pd.Series(values, index=columns),
-                               ignore_index=True)
-        return df
+        horse_detail_dict = {}
+        for i in table.find_all("th"):
+            horse_detail_dict[i.text] = []
+        for i in table.find_all('tr'):
+            count = 0
+            tmp = i.find_all("td")
+            for i in tmp:
+                horse_detail_dict[list(horse_detail_dict.keys())[count]].append(i)
+                count += 1
+        
+        return RaceDetailInfo(
+                arrival_orders=horse_detail_dict['着順'],
+                box_numbers=horse_detail_dict['枠番'],
+                horse_numbers=horse_detail_dict['馬番'],
+                horse_info=horse_detail_dict['馬名'],
+                horse_ages_and_sexes=horse_detail_dict['性齢'],
+                jockey_weights=horse_detail_dict['斤量'],
+                jockey_names=horse_detail_dict['騎手'],
+                goal_times=horse_detail_dict['タイム'],
+                goal_margins=horse_detail_dict['着差'],
+                order_transitions=horse_detail_dict['通過'],
+                half_times=horse_detail_dict['上り'],
+                odds=horse_detail_dict['単勝'],
+                popularities=horse_detail_dict['人気'],
+                horse_weights=horse_detail_dict['馬体重'],
+                trainer_names=horse_detail_dict['調教師'],
+                horse_owners=horse_detail_dict['馬主'],
+                earn_prizes=horse_detail_dict['賞金(万円)']
+        )
