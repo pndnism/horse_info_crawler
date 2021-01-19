@@ -4,17 +4,6 @@ from pandas.core.frame import DataFrame
 
 
 @dataclass(frozen=True)
-class RaceInfo:
-    # レース名
-    name: str
-    # レースNO.
-    race_number: str
-    # コース/発走情報
-    course_run_info: str
-    # 開催情報
-    held_info: str
-
-@dataclass(frozen=True)
 class RaceDetailInfo:
     # 着順
     arrival_orders: List[str]
@@ -50,6 +39,19 @@ class RaceDetailInfo:
     horse_owners: List[str]
     # 賞金
     earn_prizes: List[str]    
+
+@dataclass(frozen=True)
+class RaceInfo:
+    # レース名
+    name: str
+    # レースNO.
+    race_number: str
+    # コース/発走情報
+    course_run_info: str
+    # 開催情報
+    held_info: str
+    # レース詳細情報
+    race_detail_info: RaceDetailInfo
 
 @dataclass(frozen=True)
 class ListingPage:

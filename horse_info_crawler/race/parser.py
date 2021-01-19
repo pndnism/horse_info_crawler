@@ -48,7 +48,7 @@ class RaceInfoParser:
             race_number=self._parse_race_number(soup),
             course_run_info=self._course_run_info(soup),
             held_info=self._parse_held_info(soup),
-            race_details=self._parse_race_details(soup)
+            race_detail_info=self._parse_race_details(soup)
         )
 
     def _parse_name(self, soup: BeautifulSoup) -> str:

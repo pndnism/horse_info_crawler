@@ -152,12 +152,15 @@ class RaceDetailsNormalizer:
     @classmethod
     def normalize_horse_weights(cls, horse_weights: List[str]) -> List[str]:
         raw_list = [i.text for i in horse_weights]
-        return [re.findall("(\d+)\(",raw)[0] for raw in raw_list]
+        return [re.findall("(\d+)\(",raw)[0] if "計不" not in raw else None for raw in raw_list]
 
     @classmethod
     def normalize_horse_weight_diffs(cls, horse_weights: List[str]) -> List[str]:
+        if "計不" in horse_weights:
+            return None
         raw_list = [i.text for i in horse_weights]
-        return [re.findall("[(]([\+*|\-*]\w+)[)]",raw)[0] for raw in raw_list]
+        return [re.findall("[(]([\+|\-]\d+|0)[)]",raw)[0] 
+                    if "計不" not in raw else None for raw in raw_list]
 
     @classmethod
     def normalize_trainer_names(cls, trainer_names: List[str]) -> List[str]:

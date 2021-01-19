@@ -12,7 +12,7 @@ class RaceInfoShaper:
     def shape(self, race_info: RaceInfo) -> ShapedRaceData:
         return ShapedRaceData(
             shaped_race_info=self.shape_race_info(race_info),
-            shaped_race_detail_info=self.shape_race_detail_info(race_info)
+            shaped_race_detail_info=self.shape_race_detail_info(race_info.race_detail_info)
         )
 
     def shape_race_info(self, race_info: RaceInfo):

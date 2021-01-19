@@ -27,43 +27,39 @@ class TestCrawlRaceHistoriesUsecase(TestCase):
         listing_page_requester_mock.get.return_value = ListingPage(
             next_page_url=None,
             race_info_page_urls=[
+                "/race/list/0",
                 "/race/list/1",
-                "/race/list/2",
             ]
         )
 
         race_info_scraper_mock = Mock(spec=RaceInfoScraper)
 
-        test_race_1 = helper.create_race_info(1)
-        test_race_2 = helper.create_race_info(2)
+        test_race = []
+        test_race.append(helper.create_race_info(0))
+        test_race.append(helper.create_race_info(1))
 
         race_info_mock_data = {
-            "/race/list/1": test_race_1,
-            "/race/list/2": test_race_2,
+            "/race/list/0": test_race[0],
+            "/race/list/1": test_race[1],
         }
 
         race_info_shaper_mock = Mock(spec=RaceInfoShaper)
-        test_shaped_race_data_1 = helper.create_shaped_race_data(1)
-        test_shaped_race_data_2 = helper.create_shaped_race_data(2)
+        test_shaped_race_data = []
+        test_shaped_race_data.append(helper.create_shaped_race_data(0))
+        test_shaped_race_data.append(helper.create_shaped_race_data(1))
 
-        race_info_shaper_shape_race_mock_data = {
-            test_race_1: test_shaped_race_data_1,
-            test_race_2: test_shaped_race_data_2,
-        }
-
-        race_info_shaper_mock.shape.side_effect = lambda race: race_info_shaper_shape_race_mock_data[
-            race]
+        race_info_shaper_mock.shape.side_effect = [test_shaped_race_data[0], test_shaped_race_data[1]]
         
         race_info_repository_mock = Mock(spec=RaceInfoRepository)
 
         usecase = CrawlRaceHistoriesUsecase(
-                race_info_listing_page_scraper=race_info_scraper_mock,
-                race_info_scraper= race_info_shaper_mock,
+                race_info_listing_page_scraper=listing_page_requester_mock,
+                race_info_scraper= race_info_scraper_mock,
                 race_info_shaper=race_info_shaper_mock,
-                race_info_repository=race_info_shaper_mock)
+                race_info_repository=race_info_repository_mock)
         usecase.exec()
 
         race_info_repository_mock.save_shaped_race_info.assert_called_once_with([
-            test_shaped_race_data_1,
-            test_shaped_race_data_2
+            test_shaped_race_data[0],
+            test_shaped_race_data[1]
         ])

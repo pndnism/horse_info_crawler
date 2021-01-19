@@ -106,7 +106,7 @@ class TestRaceInfoScraper(TestCase):
                                            race_number=None,
                                            course_run_info=None,
                                            held_info=None,
-                                           race_details=None)
+                                           race_detail_info=None)
         parser_mock.parse.return_value = expected_race_info_page
 
         race_info_page_url = "https://db.netkeiba.com/race/202005040811/"
@@ -131,7 +131,7 @@ class TestRaceInfoScraper(TestCase):
                                            race_number=None,
                                            course_run_info=None,
                                            held_info=None,
-                                           race_details=None)
+                                           race_detail_info=None)
         parser_mock.parse.return_value = expected_race_info_page
 
         race_info_page_url = "/race/202005040811/"
