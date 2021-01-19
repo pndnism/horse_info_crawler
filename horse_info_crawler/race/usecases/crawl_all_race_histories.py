@@ -31,8 +31,9 @@ class CrawlRaceHistoriesUsecase:
         listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
         while listing_page_url:
             listing_page = self.race_info_listing_page_scraper.get(listing_page_url)
+            for_log = listing_page_url[:20] + "~" + listing_page_url[-20:]
             logger.info(
-                f"listing_page_url: {listing_page_url}, race_info_page_urls count: {len(listing_page.race_info_page_urls)}")
+                f"listing_page_url: {for_log}, race_info_page_urls count: {len(listing_page.race_info_page_urls)}")
 
             # レース詳細ページにアクセスして、レースのデータを取得する
             for race_info_page_url in listing_page.race_info_page_urls:
