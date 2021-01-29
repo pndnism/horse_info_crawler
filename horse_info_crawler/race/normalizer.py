@@ -20,6 +20,10 @@ class InvalidFormatError(Exception):
 
 class RaceInfoNormalizer:
     @classmethod
+    def normalize_race_url(cls, race_url: str) -> str:
+        return race_url
+
+    @classmethod
     def normalize_name(cls, name: str) -> str:
         return name
 

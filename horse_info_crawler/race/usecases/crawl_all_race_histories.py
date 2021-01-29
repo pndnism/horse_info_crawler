@@ -25,6 +25,9 @@ class CrawlRaceHistoriesUsecase:
         self.race_info_repository.save_shaped_race_info(self._shape_race_infos(race_histories))
         logger.info("End crawl_race_histories.")
 
+    def _prepare_to_check_saved_urls():
+        pass
+    
     def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
         race_histories = []
         # リスティングページをクロールして物件詳細の URL 一覧を取得する

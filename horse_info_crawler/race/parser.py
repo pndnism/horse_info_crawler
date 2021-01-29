@@ -10,11 +10,12 @@ from horse_info_crawler.components.logger import warning
 import urllib
 from urllib.parse import urlencode
 
+NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
+
 class RaceInfoListingPageParser:
     """
     取得したHTMLをパースして構造化したデータに変換する
     """
-    NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
 
     def parse(self, html: str) -> ListingPage:
         soup = BeautifulSoup(html, "html.parser")
@@ -26,7 +27,7 @@ class RaceInfoListingPageParser:
             RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = RACE_LISTING_PAGE_POST_INPUT_DIC.get(
                 "page") + 1
             next_page_url = '%s?%s' % (
-                self.NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
+                NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
 
         race_info_page_urls = [
             i.get("href") for i in soup.find_all(href=re.compile("/race/\d"))]
@@ -44,12 +45,15 @@ class RaceInfoParser:
     def parse(self, html) -> RaceInfo:
         soup = BeautifulSoup(html, "lxml")
         return RaceInfo(
+            race_url=self._parse_race_url(soup),
             name=self._parse_name(soup),
             race_number=self._parse_race_number(soup),
             course_run_info=self._course_run_info(soup),
             held_info=self._parse_held_info(soup),
             race_detail_info=self._parse_race_details(soup)
         )
+    def _parse_race_url(self, soup: BeautifulSoup) -> str:
+        return NETKEIBA_BASE_URL + soup.find("a", class_="active").get("href")
 
     def _parse_name(self, soup: BeautifulSoup) -> str:
         if len(soup.find_all("h1")) == 1:
