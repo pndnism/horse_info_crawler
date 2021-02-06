@@ -53,7 +53,9 @@ class RaceInfoParser:
             race_detail_info=self._parse_race_details(soup)
         )
     def _parse_race_url(self, soup: BeautifulSoup) -> str:
-        return NETKEIBA_BASE_URL + soup.find("a", class_="active").get("href")
+        if soup.find("a", class_="active", title="R") is None:
+            return None
+        return NETKEIBA_BASE_URL[:-1] + soup.find("a", class_="active", title="R").get("href")
 
     def _parse_name(self, soup: BeautifulSoup) -> str:
         if len(soup.find_all("h1")) == 1:

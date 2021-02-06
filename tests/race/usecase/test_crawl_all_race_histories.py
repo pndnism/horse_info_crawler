@@ -20,9 +20,8 @@ class TestCrawlRaceHistoriesUsecase(TestCase):
         listing_page_requester_mock = Mock(RaceInfoListingPageScraper)
         LISTING_PAGE_START_URLS = '%s?%s' % (
             NETKEIBA_BASE_URL, urllib.parse.unquote(urlencode(RACE_LISTING_PAGE_POST_INPUT_DIC)))
-        listing_page_requester_mock.LISTING_PAGE_START_URLS = [
-            LISTING_PAGE_START_URLS
-        ]
+        listing_page_requester_mock.LISTING_PAGE_START_URLS = LISTING_PAGE_START_URLS
+        
 
         listing_page_requester_mock.get.return_value = ListingPage(
             next_page_url=None,

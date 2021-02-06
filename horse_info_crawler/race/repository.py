@@ -49,10 +49,11 @@ class RaceInfoRepository:
         # shaped_race_data を dataframeに変換する
         df_data = self.formatter.data_to_df(shaped_race_info_list)
         current_date_ymd = self.current_datetime.strftime("%Y-%m-%d")
+        current_time = self.current_datetime.now().time().strftime("%H%M%S")
         
         os.makedirs(f"./horse_info_crawler/race/data/race_histories/{current_date_ymd}", exist_ok=True)
 
-        save_path = f"./horse_info_crawler/race/data/race_histories/{current_date_ymd}/shaped_race_history.csv"
+        save_path = f"./horse_info_crawler/race/data/race_histories/{current_date_ymd}/shaped_race_history_{current_time}.csv"
         # データフレームを CSV として ローカルに保存する
         df_data.to_csv(save_path, index=False)
 

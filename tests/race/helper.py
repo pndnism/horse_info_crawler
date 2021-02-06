@@ -3,6 +3,7 @@ import pandas as pd
 
 def create_race_info(i: int):
     return RaceInfo (
+        race_url=f"test_url_{i}",
         name=f"test_name_{i}",
         race_number=f"test_race_number_{i}",
         course_run_info=f"test_course_run_info_{i}",
@@ -31,6 +32,7 @@ def create_race_info(i: int):
 def create_shaped_race_data(i: int):
     return ShapedRaceData (
         ShapedRaceInfo(
+            race_url=f"test_shaped_url_{i}",
             name=f'test_shaped_name_{i}',
             race_number=f'test_shaped_race_number_{i}',
             course_type=f'test_shaped_course_type_{i}',

@@ -19,7 +19,7 @@ def crawl_race_history(crawl_limit: Optional[int]):
     usecase = race_usecases.get_crawl_race_histories_usecase()
     usecase.exec(crawl_limit)
 
-    click.echo("crawl_cbre_properties Completed")
+    click.echo("crawl_race_history Completed")
 
 if __name__ == '__main__':
     sentry_sdk.init(

@@ -4,6 +4,8 @@ import urllib
 from horse_info_crawler.race.repository import RaceInfoRepository
 from horse_info_crawler.race.normalizer import InvalidFormatError, UnsupportedFormatError
 from urllib.parse import urlencode
+import glob
+import pandas as pd
 from horse_info_crawler.race.domain import RaceInfo, ShapedRaceData
 from typing import Optional, List
 from horse_info_crawler.race.shaper import RaceInfoShaper
@@ -30,6 +32,7 @@ class CrawlRaceHistoriesUsecase:
     
     def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
         race_histories = []
+        crawled_urls = self._check_crawled_urls()
         # リスティングページをクロールして物件詳細の URL 一覧を取得する
         listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
         while listing_page_url:
@@ -42,6 +45,10 @@ class CrawlRaceHistoriesUsecase:
             for race_info_page_url in listing_page.race_info_page_urls:
                 # CSV にアップロードするデータ構造をいれる
                 # Errorが発生したら該当PropertyはSkipする
+               
+                if NETKEIBA_BASE_URL[:-1] + race_info_page_url in crawled_urls:
+                    logger.info("already crawled. skip...")
+                    continue
                 try:
                     if self._get_race_info(race_info_page_url):
                         race_histories.append(self._get_race_info(race_info_page_url))
@@ -94,6 +101,17 @@ class CrawlRaceHistoriesUsecase:
 
     def _shape_race_info(self, race_info: RaceInfo) -> ShapedRaceData:
         return self.race_info_shaper.shape(race_info)
+
+    def _check_crawled_urls(self):
+        check_csvs = glob.glob("/Users/daikimiyazaki/workspace/pndnism/horse_race_prediction/horse_info_crawler/horse_info_crawler/race/data/race_histories/**/*.csv",recursive=True)
+        concat_list = []
+        if len(check_csvs) == 0:
+            return []
+        for i in check_csvs:
+            concat_list.append(pd.read_csv(i))
+        concat_df = pd.concat(concat_list, axis=0)
+        crawled_urls = set(list(concat_df.race_url))
+        return list(crawled_urls)
 
     
 
