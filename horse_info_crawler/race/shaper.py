@@ -17,6 +17,7 @@ class RaceInfoShaper:
 
     def shape_race_info(self, race_info: RaceInfo):
         return ShapedRaceInfo(
+            race_url=self.race_info_normalizer.normalize_race_url(race_info.race_url),
             name=self.race_info_normalizer.normalize_name(race_info.name),
             race_number=self.race_info_normalizer.normalize_race_number(
                 race_info.race_number),

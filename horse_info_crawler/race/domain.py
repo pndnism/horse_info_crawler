@@ -42,6 +42,8 @@ class RaceDetailInfo:
 
 @dataclass(frozen=True)
 class RaceInfo:
+    # レースURL
+    race_url: str
     # レース名
     name: str
     # レースNO.
@@ -61,6 +63,8 @@ class ListingPage:
 
 @dataclass(frozen=True)
 class ShapedRaceInfo:
+    # レースURL
+    race_url: str
     # レース名
     name: str
     # レースNO.

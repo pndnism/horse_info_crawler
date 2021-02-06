@@ -20,32 +20,64 @@ class InvalidFormatError(Exception):
 
 class RaceInfoNormalizer:
     @classmethod
+    def normalize_race_url(cls, race_url: str) -> str:
+        return race_url
+
+    @classmethod
     def normalize_name(cls, name: str) -> str:
         return name
 
     @classmethod
     def normalize_race_number(cls, race_number: str) -> str:
+        if race_number is None:
+            return
+
+        if re.findall(r'(\d+)\sR', race_number) is None:
+            return None
         return re.findall(r'(\d+)\sR', race_number)[0]
 
     @classmethod
     def normalize_course_type(cls, course_run_info: str) -> str:
-        elem = course_run_info.split(" / ")[0]
-        return re.search("ダ|芝|障芝", elem).group()
+        if course_run_info is not None:
+            elem = course_run_info.split(" / ")[0]
+            if elem is None:
+                return None
+            return re.search("ダ|芝|障芝", elem).group()
+
+        raise InvalidFormatError(f'Invalid format. : {course_run_info}')
 
     @classmethod
     def normalize_course_direction(cls, course_run_info: str) -> str:
-        elem = course_run_info.split(" / ")[0]
-        return re.search("右|左|直線|ダート|外|内-外|外-内|内2周", elem).group()
+        if course_run_info is not None:
+            
+            elem = course_run_info.split(" / ")[0]
+            if elem is None:
+                return None
+            return re.search("右|左|直線|ダート|外|内-外|外-内|内2周", elem).group()
+
+        raise InvalidFormatError(f'Invalid format. : {course_run_info}')
 
     @classmethod
     def normalize_course_length(cls, course_run_info: str) -> str:
-        elem = course_run_info.split(" / ")[0]
-        return re.search("[0-9]{2,5}", elem).group()
+        if course_run_info is not None:
+            elem = course_run_info.split(" / ")[0]
+            if elem is None:
+                return None
+            if re.search("[0-9]{2,5}", elem) is None:
+                return None
+
+            return re.search("[0-9]{2,5}", elem).group()
+
+        raise InvalidFormatError(f'Invalid format. : {course_run_info}')
 
     @classmethod
     def normalize_weather(cls, course_run_info: str) -> str:
         if "天候" in course_run_info:
             elem = course_run_info.split(" / ")[1]
+            if elem is None:
+                return None
+            if len(re.split(' : ', elem)) < 2:
+                return None
             return re.split(' : ', elem)[1]
         
         raise InvalidFormatError(f'Invalid format. : {course_run_info}')
@@ -53,11 +85,19 @@ class RaceInfoNormalizer:
     @classmethod
     def normalize_course_condition(cls, course_run_info: str) -> str:
         elem = course_run_info.split(" / ")[2]
+        if elem is None:
+            return None
+        if len(re.split(' : ', elem)) < 2:
+            return None
         return re.split(' : ', elem)[1]
 
     @classmethod
     def normalize_race_start_time(cls, course_run_info: str) -> str:
         elem = course_run_info.split(" / ")[3]
+        if elem is None:
+            return None
+        if len(re.split(' : ', elem)) < 2:
+            return None
         return re.split(' : ', elem)[1]
 
     @classmethod
@@ -67,16 +107,22 @@ class RaceInfoNormalizer:
 
     @classmethod
     def normalize_held_place(cls, held_info: str) -> str:
+        if len(held_info.split(" ")) < 2:
+            return None
         elem = held_info.split(" ")[1]
         return re.sub("[[0-9]+回|[0-9]+日目","",elem)
 
     @classmethod
     def normalize_held_number(cls, held_info: str) -> str:
+        if len(held_info.split(" ")) < 2:
+            return None
         elem = held_info.split(" ")[1]
         return re.findall("(\d+)回", elem)[0]
 
     @classmethod
     def normalize_held_date_number(cls, held_info: str) -> str:
+        if len(held_info.split(" ")) < 2:
+            return None
         elem = held_info.split(" ")[1]
         return re.findall("(\d+)日目", elem)[0]
 
@@ -105,20 +151,28 @@ class RaceDetailsNormalizer:
 
     @classmethod
     def normalize_horse_ids(cls, horse_info: List[str]) -> List[str]:
-        raw_list = [i.find("a").get("href") for i in horse_info]
-        return [re.findall("(\d+)", raw)[0] for raw in raw_list]
+        raw_list = [i.find("a").get("href") if i.find("a") is not None
+                             else None for i in horse_info]
+        return [re.findall("(\d+)", raw)[0] if raw is not None 
+                                        else None for raw in raw_list]
 
     @classmethod
     def normalize_horse_sexes(cls, horse_ages_and_sexes: List[str]) -> List[str]:
-        return [re.findall("(セ|牝|牡)",i.text)[0] for i in horse_ages_and_sexes]
+        return [re.findall("(セ|牝|牡)",i.text)[0] 
+                    if len(re.findall("(セ|牝|牡)",i.text)) != 0 
+                    else None for i in horse_ages_and_sexes]
 
     @classmethod
     def normalize_horse_ages(cls, horse_ages_and_sexes: List[str]) -> List[str]:
-        return [re.findall("(\d+)",i.text)[0] for i in horse_ages_and_sexes]
+        return [re.findall("(\d+)",i.text)[0] 
+                    if len(re.findall("(\d+)",i.text)) != 0 
+                    else None for i in horse_ages_and_sexes]
 
     @classmethod
     def normalize_jockey_weights(cls, jockey_weights: List[str]) -> List[str]:
-        return [re.findall("(\d+)",i.text)[0] for i in jockey_weights]
+        return [re.findall("(\d+)",i.text)[0] 
+                    if len(re.findall("(\d+)",i.text)) != 0 
+                    else None for i in jockey_weights]
 
     @classmethod
     def normalize_jockey_names(cls, jockey_names: List[str]) -> List[str]:
@@ -152,7 +206,8 @@ class RaceDetailsNormalizer:
     @classmethod
     def normalize_horse_weights(cls, horse_weights: List[str]) -> List[str]:
         raw_list = [i.text for i in horse_weights]
-        return [re.findall("(\d+)\(",raw)[0] if "計不" not in raw else None for raw in raw_list]
+        return [re.findall("(\d+)\(",raw)[0] if "計不" not in raw and 
+                                                    len(re.findall("(\d+)\(",raw)) >=1 else None for raw in raw_list]
 
     @classmethod
     def normalize_horse_weight_diffs(cls, horse_weights: List[str]) -> List[str]:
@@ -160,7 +215,8 @@ class RaceDetailsNormalizer:
             return None
         raw_list = [i.text for i in horse_weights]
         return [re.findall("[(]([\+|\-]\d+|0)[)]",raw)[0] 
-                    if "計不" not in raw else None for raw in raw_list]
+                    if "計不" not in raw 
+                                    and len(re.findall("[(]([\+|\-]\d+|0)[)]",raw))  >=1 else None for raw in raw_list]
 
     @classmethod
     def normalize_trainer_names(cls, trainer_names: List[str]) -> List[str]:

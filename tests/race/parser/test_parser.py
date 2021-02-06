@@ -46,7 +46,7 @@ class TestRaceInfoParser(TestCase):
             result = parser.parse(response_html)
 
             self.assertIsNotNone(result)
-
+            self.assertEqual(result.race_url, "https://db.netkeiba.com/race/202035111401/")
             self.assertEqual(result.name, "C2十三組")
             self.assertEqual(result.race_number, "1 R")
             self.assertEqual(result.course_run_info,

@@ -102,7 +102,8 @@ class TestRaceInfoScraper(TestCase):
         responses.add(responses.GET, "https://db.netkeiba.com/race/202005040811/",
                       body="test html", status=200)
         parser_mock = Mock(spec=RaceInfoParser)
-        expected_race_info_page = RaceInfo(name=None,
+        expected_race_info_page = RaceInfo(race_url=None,
+                                           name=None,
                                            race_number=None,
                                            course_run_info=None,
                                            held_info=None,
@@ -127,7 +128,8 @@ class TestRaceInfoScraper(TestCase):
         responses.add(responses.GET, "https://db.netkeiba.com/race/202005040811/",
                       body="test html", status=200)
         parser_mock = Mock(spec=RaceInfoParser)
-        expected_race_info_page = RaceInfo(name=None,
+        expected_race_info_page = RaceInfo(race_url=None,
+                                           name=None,
                                            race_number=None,
                                            course_run_info=None,
                                            held_info=None,
