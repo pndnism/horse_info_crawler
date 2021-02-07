@@ -34,83 +34,75 @@ class HorseInfoListingPageParser:
             horse_info_page_urls=horse_info_page_urls
         )
 
-class HosrseInfoParser:
+class HorseInfoParser:
     """
     取得したHTMLをパースして構造化したデータに変換する
     """
 
     def parse(self, html) -> HorseInfo:
         soup = BeautifulSoup(html, "lxml")
+        profile_table = soup.find_all("table", class_="db_prof_table no_OwnerUnit")[0]
+        profile_dic = {}
+        for i,j in zip(profile_table.find_all("th"), profile_table.find_all("td")):
+            profile_dic[i.text] = j.text
+
+        blood_table = soup.find_all("dd", class_="DB_ProfHead_dd_01")[0]
         return HorseInfo(
             horse_url=self._parse_horse_url(soup),
             name=self._parse_name(soup),
-            birthday=self._parse_birthday(soup),
-            trainer_name=self._parse_trainer_name(soup),
-            owner_name=self._parse_owner_name(soup),
-            producer=self._parse_producer(soup),
-            origin_place=self._parse_origin_place(soup),
-            mother=self._parse_mother(soup),
-            father=self._parse_father(soup),
-            mother_of_father=self._parse_mother_of_father(soup),
-            father_of_father=self._parse_father_of_father(soup),
-            mother_of_mother=self._parse_mother_of_mother(soup),
-            father_of_mother=self._parse_father_of_mother(soup)
+            birthday=self._parse_birthday(profile_dic),
+            trainer_name=self._parse_trainer_name(profile_dic),
+            owner_name=self._parse_owner_name(profile_dic),
+            producer=self._parse_producer(profile_dic),
+            origin_place=self._parse_origin_place(profile_dic),
+            mother=self._parse_mother(blood_table),
+            father=self._parse_father(blood_table),
+            mother_of_father=self._parse_mother_of_father(blood_table),
+            father_of_father=self._parse_father_of_father(blood_table),
+            mother_of_mother=self._parse_mother_of_mother(blood_table),
+            father_of_mother=self._parse_father_of_mother(blood_table)
         )
     def _parse_horse_url(self, soup: BeautifulSoup) -> str:
-        if soup.find("a", class_="active", title="R") is None:
+        if soup.find("meta", property="og:url") is None:
             return None
-        return NETKEIBA_BASE_URL[:-1] + soup.find("a", class_="active", title="R").get("href")
+        return soup.find("meta", property="og:url").get("content")
 
-    def _parse_name(self, soup: BeautifulSoup) -> str:
+    def _parse_name(self, soup: BeautifulSoup) -> str
         if len(soup.find_all("h1")) == 1:
             return None
             #raise UnsupportedFormatError("name not found.")
-        return soup.find_all("h1")[1].text
+        name = soup.find_all("h1")[1].text
+        return ''.join(name.split())
 
-    def _parse_birthday(self, soup: BeautifulSoup) -> Optional[str]:
-        if soup.find("dl", class_="racedata fc") is None:
-            return None
-        race_number_elem = soup.find("dl", class_="racedata fc").find("dt")
-        race_number = re.sub("\n", "", race_number_elem.text)
-        return race_number
+    def _parse_birthday(self, profile_dic: dict) -> Optional[str]:
+        return profile_dic["生年月日"]
 
-    def _parse_trainer_name(self, soup: BeautifulSoup) -> Optional[str]:
-        course_run_info_elem = soup.find("diary_snap_cut")
-        if course_run_info_elem is None:
-            return None
-        if course_run_info_elem.find("span") is None:
-            return None
-        course_run_info = re.sub(u"\xa0", " ", course_run_info_elem.find("span").text)
-        return course_run_info
+    def _parse_trainer_name(self, profile_dic: dict) -> Optional[str]:
+        return profile_dic["調教師"]
 
-    def _parse_owner_name(self, soup: BeautifulSoup) -> Optional[str]:
-        held_info_elem = soup.find("p", class_="smalltxt")
-        if held_info_elem is None:
-            return None
-        held_info = re.sub("\xa0", "", held_info_elem.text)
-        held_info = re.sub(" \Z", "", held_info)
-        return held_info
+    def _parse_owner_name(self, profile_dic: dict) -> Optional[str]:
+        return profile_dic["馬主"]
 
-    def _parse_producer(self, soup: BeautifulSoup) -> Optional[str]:
-        pass
+    def _parse_producer(self, profile_dic: dict) -> Optional[str]:
+        return profile_dic["生産者"]
 
-    def _parse_origin_place(self, soup: BeautifulSoup) -> Optional[str]:
-        pass
+    def _parse_origin_place(self, profile_dic: dict) -> Optional[str]:
+        return profile_dic["産地"]
 
-    def _parse_mother(self, soup: BeautifulSoup) -> str:
-        pass
+    def _parse_mother(self, blood_table: BeautifulSoup) -> str:
+        return blood_table.find_all("a")[3].text
 
-    def _parse_father(self, soup: BeautifulSoup) -> str:
-        pass
+    def _parse_father(self, blood_table: BeautifulSoup) -> str:
+        return blood_table.find_all("a")[0].text
 
-    def _parse_mother_of_father(self, soup: BeautifulSoup) -> str:
-        pass
+    def _parse_mother_of_father(self, blood_table: BeautifulSoup) -> str:
+        return blood_table.find_all("a")[2].text
 
-    def _parse_father_of_father(self, soup: BeautifulSoup) -> str:
-        pass
+    def _parse_father_of_father(self, blood_table: BeautifulSoup) -> str:
+        return blood_table.find_all("a")[1].text
 
-    def _parse_mother_of_mother(self, soup: BeautifulSoup) -> str:
-        pass
+    def _parse_mother_of_mother(self, blood_table: BeautifulSoup) -> str:
+        return blood_table.find_all("a")[5].text
 
-    def _parse_father_of_mother(self, soup: BeautifulSoup) -> str:
-        pass
+    def _parse_father_of_mother(self, blood_table: BeautifulSoup) -> str:
+        return blood_table.find_all("a")[4].text
