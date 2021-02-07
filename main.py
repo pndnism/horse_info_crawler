@@ -1,6 +1,7 @@
 from typing import Optional
 import click
 from horse_info_crawler.race import usecases as race_usecases
+from horse_info_crawler.pedigree import usecases as horse_usecases
 import sentry_sdk
 
 
@@ -20,6 +21,19 @@ def crawl_race_history(crawl_limit: Optional[int]):
     usecase.exec(crawl_limit)
 
     click.echo("crawl_race_history Completed")
+
+@main.command("horse")
+@click.option("--crawl-limit", default=None, type=int)
+def crawl_horse_info(crawl_limit: Optional[int]):
+    """Crawl race history.
+    Args:
+        crawl_limit Optional[int]: the max number of properties to crawl.
+    """
+    click.echo(f"crawl_horse_info Started. crawl_limit:{crawl_limit}")
+    usecase = horse_usecases.get_crawl_horse_info_usecase()
+    usecase.exec(crawl_limit)
+
+    click.echo("crawl_horse_info Completed")
 
 if __name__ == '__main__':
     sentry_sdk.init(
