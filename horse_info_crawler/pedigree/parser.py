@@ -67,7 +67,7 @@ class HorseInfoParser:
             return None
         return soup.find("meta", property="og:url").get("content")
 
-    def _parse_name(self, soup: BeautifulSoup) -> str
+    def _parse_name(self, soup: BeautifulSoup) -> str:
         if len(soup.find_all("h1")) == 1:
             return None
             #raise UnsupportedFormatError("name not found.")
