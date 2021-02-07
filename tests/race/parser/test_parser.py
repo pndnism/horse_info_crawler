@@ -4,7 +4,6 @@ from unittest import TestCase
 
 from horse_info_crawler.race.parser import RaceInfoListingPageParser, RaceInfoParser
 from horse_info_crawler.race.config import RACE_LISTING_PAGE_POST_INPUT_DIC
-import pandas as pd
 import urllib
 from urllib.parse import urlencode
 

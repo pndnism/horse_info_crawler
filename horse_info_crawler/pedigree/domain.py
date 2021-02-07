@@ -10,6 +10,7 @@ class ListingPage:
 
 @dataclass(frozen=True)
 class HorseInfo:
+    horse_url: str
     name: str
     birthday: Optional[str]
     trainer_name: Optional[str]
@@ -26,6 +27,7 @@ class HorseInfo:
 
 @dataclass(frozen=True)
 class ShapedHorseInfo:
+    horse_url: str
     name: str
     birthday: Optional[str]
     trainer_name: Optional[str]
