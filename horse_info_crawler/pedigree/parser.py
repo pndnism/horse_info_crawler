@@ -41,7 +41,7 @@ class HorseInfoParser:
 
     def parse(self, html) -> HorseInfo:
         soup = BeautifulSoup(html, "lxml")
-        profile_table = soup.find_all("table", class_="db_prof_table no_OwnerUnit")[0]
+        profile_table = soup.find_all("table", summary="のプロフィール")[0]
         profile_dic = {}
         for i,j in zip(profile_table.find_all("th"), profile_table.find_all("td")):
             profile_dic[i.text] = j.text

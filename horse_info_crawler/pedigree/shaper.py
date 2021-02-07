@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from horse_info_crawler.pedigree.normalizer import DetailsNormalizer, HorseInfoNormalizer
+from horse_info_crawler.pedigree.normalizer import HorseInfoNormalizer
 from horse_info_crawler.pedigree.domain import HorseInfo, ShapedHorseInfo
 from typing import Type
 
