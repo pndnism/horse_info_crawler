@@ -27,7 +27,7 @@ class HorseInfo:
 @dataclass(frozen=True)
 class ShapedHorseInfo:
     name: str
-    birthday: Optional[datetime]
+    birthday: Optional[str]
     trainer_name: Optional[str]
     owner_name: Optional[str]
     producer: Optional[str]
