@@ -5,6 +5,9 @@ from horse_info_crawler.pedigree.config import HORSE_LISTING_PAGE_POST_INPUT_DIC
 import urllib
 from urllib.parse import urlencode
 import re
+from selenium import webdriver
+from horse_info_crawler.components import logger
+
 
 
 NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
@@ -15,8 +18,7 @@ class HorseInfoListingPageParser:
     """
 
     def parse(self, html: str) -> ListingPage:
-        soup = BeautifulSoup(html, "html.parser")
-
+        soup = BeautifulSoup(html, "lxml")
 
         next_page_url = None
         next_page_element = soup.select_one("div.pager a:contains('次')")
@@ -39,9 +41,20 @@ class HorseInfoParser:
     取得したHTMLをパースして構造化したデータに変換する
     """
 
-    def parse(self, html) -> HorseInfo:
+    def parse(self, html, url) -> HorseInfo:
         soup = BeautifulSoup(html, "lxml")
-        profile_table = soup.find_all("table", summary="のプロフィール")[0]
+        if len(soup.find_all("table", summary="のプロフィール")) != 0:
+            profile_table = soup.find_all("table", summary="のプロフィール")[0]
+        else:
+            logger.info("crawling by selenium...")
+            options = webdriver.ChromeOptions()
+            options.add_argument('--headless')
+            driver = webdriver.Chrome(options=options, executable_path='/Users/daikimiyazaki/workspace/pndnism/horse_race_prediction/horse_info_crawler/horse_info_crawler/components/chromedriver',)
+            driver.get(url)
+            content = driver.page_source
+            soup = BeautifulSoup(content, "lxml")
+            profile_table = soup.find_all("table", summary="のプロフィール")[0]
+
         profile_dic = {}
         for i,j in zip(profile_table.find_all("th"), profile_table.find_all("td")):
             profile_dic[i.text] = j.text

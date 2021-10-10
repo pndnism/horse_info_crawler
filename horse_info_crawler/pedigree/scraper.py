@@ -4,6 +4,8 @@ from horse_info_crawler.pedigree.config import HORSE_LISTING_PAGE_POST_INPUT_DIC
 from dataclasses import dataclass
 import urllib
 from urllib.parse import urlencode
+import subprocess
+import socks,socket
 
 import requests
 
@@ -16,7 +18,6 @@ class DetailPageNotFoundError(Exception):
     pass
 
 NETKEIBA_BASE_URL = "https://db.netkeiba.com/"
-
 
 @dataclass
 class HorseInfoListingPageScraper:
@@ -42,10 +43,19 @@ class HorseInfoScraper:
     parser: HorseInfoParser
 
     def get(self, horse_info_page_url: str) -> HorseInfo:
+        #args = ['sudo', 'service', 'tor','restart']
+        #subprocess.call(args)
+        #socks.set_default_proxy(socks.PROXY_TYPE_SOCKS5, '127.0.0.1', 9050)
+        #socket.socket = socks.socksocket
+        #proxies = {
+        #'http':'socks5://127.0.0.1:9050',
+        #'https':'socks5://127.0.0.1:9050'
+        #}
         # horse_info_parser が相対パスだったら絶対パスに変換数
         horse_info_page_absolute_url = urllib.parse.urljoin(
             NETKEIBA_BASE_URL, horse_info_page_url)
         logger.info(f"Accessing to {horse_info_page_absolute_url}.")
         response = requests.get(horse_info_page_absolute_url)
+        #print(response)
         response.raise_for_status()
-        return self.parser.parse(response.content)
+        return self.parser.parse(response.content, horse_info_page_absolute_url)

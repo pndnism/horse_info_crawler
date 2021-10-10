@@ -20,7 +20,6 @@ class RaceInfoListingPageParser:
     def parse(self, html: str) -> ListingPage:
         soup = BeautifulSoup(html, "html.parser")
 
-
         next_page_url = None
         next_page_element = soup.select_one("div.pager a:contains('次')")
         if next_page_element:
