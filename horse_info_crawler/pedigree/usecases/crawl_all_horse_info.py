@@ -11,6 +11,7 @@ from typing import Optional, List
 from horse_info_crawler.pedigree.shaper import HorseInfoShaper
 from horse_info_crawler.pedigree.scraper import DetailPageNotFoundError, NETKEIBA_BASE_URL, HorseInfoListingPageScraper, HorseInfoScraper
 from horse_info_crawler.components import logger
+import time
 
 @dataclass
 class CrawlHorseInfoUsecase:
@@ -35,6 +36,7 @@ class CrawlHorseInfoUsecase:
         crawled_urls = self._check_crawled_urls()
         # リスティングページをクロールして物件詳細の URL 一覧を取得する
         listing_page_url = self.horse_info_listing_page_scraper.LISTING_PAGE_START_URLS
+        count = 0
         while listing_page_url:
             listing_page = self.horse_info_listing_page_scraper.get(listing_page_url)
             for_log = listing_page_url[:20] + "~" + listing_page_url[-20:]
@@ -45,7 +47,7 @@ class CrawlHorseInfoUsecase:
             for horse_info_page_url in listing_page.horse_info_page_urls:
                 # CSV にアップロードするデータ構造をいれる
                 # Errorが発生したら該当PropertyはSkipする
-               
+                count += 1
                 if NETKEIBA_BASE_URL[:-1] + horse_info_page_url in crawled_urls:
                     logger.info("already crawled. skip...")
                     continue
@@ -58,6 +60,10 @@ class CrawlHorseInfoUsecase:
                     logger.warning(f"Skip getting horse:{e}")
                     # TODO: sentryとかエラー監視ツール入れる
 
+                #if count == 100:
+                    #logger.info("10sec crawler idling... ")
+                    #time.sleep(10)
+                #    count = 0
                 if crawl_limit and len(horse_info) >= crawl_limit:
                     # crawl_limit の件数に達したらクロールを終了する
                     logger.info(f"Finish crawl. horse_histories count: {len(horse_info)}")
@@ -101,7 +107,7 @@ class CrawlHorseInfoUsecase:
         return self.horse_info_shaper.shape(horse_info)
 
     def _check_crawled_urls(self):
-        check_csvs = glob.glob("/Users/daikimiyazaki/workspace/pndnism/horse_horse_prediction/horse_info_crawler/horse_info_crawler/pedigree/data/horse_info/**/*.csv",recursive=True)
+        check_csvs = glob.glob("/Users/daikimiyazaki/workspace/pndnism/horse_race_prediction/horse_info_crawler/horse_info_crawler/pedigree/data/horse_info/**/*.csv",recursive=True)
         concat_list = []
         if len(check_csvs) == 0:
             return []

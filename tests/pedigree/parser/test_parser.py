@@ -39,7 +39,7 @@ class TestHorseInfoParser(TestCase):
             response_html = f.read()
 
             parser = HorseInfoParser()
-            result = parser.parse(response_html)
+            result = parser.parse(response_html, "https://db.netkeiba.com/horse/2014102226/")
 
             self.assertIsNotNone(result)
             self.assertEqual(result.horse_url, "https://db.netkeiba.com/horse/2014102226/")

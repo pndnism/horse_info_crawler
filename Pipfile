@@ -10,13 +10,14 @@ flake8 = "*"
 [packages]
 bs4 = "*"
 pandas = "*"
-requests = "*"
+requests = {extras = ["socks"], version = "*"}
 responses = "*"
 boto3 = "*"
 click = "*"
 selenium = "*"
 lxml = "*"
 sentry-sdk = "*"
+pysocks = "*"
 
 [requires]
 python_version = "3.8.1"
