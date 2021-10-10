@@ -18,6 +18,7 @@ selenium = "*"
 lxml = "*"
 sentry-sdk = "*"
 pysocks = "*"
+google-cloud-storage = "*"
 
 [requires]
 python_version = "3.8.1"
