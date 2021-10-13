@@ -32,6 +32,7 @@ class CrawlRaceHistoriesUsecase:
     
     def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
         race_histories = []
+        crawl_end_flg = False
         crawled_urls = self._check_crawled_urls()
         # リスティングページをクロールして物件詳細の URL 一覧を取得する
         listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
@@ -48,7 +49,8 @@ class CrawlRaceHistoriesUsecase:
                
                 if NETKEIBA_BASE_URL[:-1] + race_info_page_url in crawled_urls:
                     logger.info("already crawled. skip...")
-                    continue
+                    crawl_end_flg = True
+                    break
                 try:
                     if self._get_race_info(race_info_page_url):
                         race_histories.append(self._get_race_info(race_info_page_url))
@@ -64,6 +66,8 @@ class CrawlRaceHistoriesUsecase:
                     return race_histories
 
             # next_page_url がある場合は次ページへアクセス
+            if crawl_end_flg:
+                break
             print(listing_page.next_page_url)
             listing_page_url = listing_page.next_page_url 
         
@@ -103,6 +107,7 @@ class CrawlRaceHistoriesUsecase:
         return self.race_info_shaper.shape(race_info)
 
     def _check_crawled_urls(self):
+        # TODO: cloud strageを参照するようにしたい
         check_csvs = glob.glob("/Users/daikimiyazaki/workspace/pndnism/horse_race_prediction/horse_info_crawler/horse_info_crawler/race/data/race_histories/**/*.csv",recursive=True)
         concat_list = []
         if len(check_csvs) == 0:
