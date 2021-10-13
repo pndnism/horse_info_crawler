@@ -2,6 +2,7 @@ import csv
 import dataclasses
 
 from pandas.core.frame import DataFrame
+from horse_info_crawler.components import logger
 from horse_info_crawler.pedigree.domain import ShapedHorseInfo
 import io
 from datetime import datetime
@@ -25,7 +26,8 @@ class DataFormatter:
         for shaped_horse_info in shaped_horse_info_list:
             horse_data_dict = shaped_horse_info.__dict__
             concat_list.append(horse_data_dict)
-
+        if len(concat_list) == 0:
+            return None
         shaped_horse_info_df = pd.DataFrame(concat_list)
         return shaped_horse_info_df
 
@@ -37,6 +39,9 @@ class HorseInfoRepository:
     def save_shaped_horse_info(self, shaped_horse_info_list: List[ShapedHorseInfo]):
         # shaped_horse_data を dataframeに変換する
         df_data = self.formatter.data_to_df(shaped_horse_info_list)
+        if not df_data:
+            logger.info("no data to save.")
+            return
         current_date_ymd = self.current_datetime.strftime("%Y-%m-%d")
         current_time = self.current_datetime.now().time().strftime("%H%M%S")
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'/Users/daikimiyazaki/.config/pndnism-project-fc40cb799b41.json'
