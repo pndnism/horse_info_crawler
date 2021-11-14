@@ -38,7 +38,24 @@ class RaceDetailInfo:
     # 馬主
     horse_owners: List[str]
     # 賞金
-    earn_prizes: List[str]    
+    earn_prizes: List[str]  
+
+@dataclass
+class PayResult:
+    # 単勝
+    tansho: List[List[str]]
+    # 複勝
+    fukusho: List[List[str]]
+    # 馬連
+    umaren: List[List[str]]
+    # ワイド
+    wide: List[List[str]]
+    # 馬単
+    umatan: List[List[str]]
+    # 三連複
+    sanrentan: List[List[str]]
+    # 三連単
+    sanrenpuku: List[List[str]]   
 
 @dataclass(frozen=True)
 class RaceInfo:
@@ -54,6 +71,8 @@ class RaceInfo:
     held_info: str
     # レース詳細情報
     race_detail_info: RaceDetailInfo
+    # 払い戻し情報
+    pay_result: PayResult
 
 @dataclass(frozen=True)
 class ListingPage:
@@ -135,8 +154,23 @@ class ShapedRaceDetailInfo:
     # 賞金
     earn_prizes: List[str]
 
+@dataclass
+class ShapedPayResult:
+    tansho_prize: float
+    fukusho_prize_1st: float
+    fukusho_prize_2nd: float
+    umaren_prize: float
+    wide_prize_1st_2nd: float
+    wide_prize_1st_3rd: float
+    wide_prize_2nd_3rd: float
+    umatan_prize: float
+    sanrentan_prize: float
+    sanrenpuku_prize: float
 
 @dataclass
 class ShapedRaceData:
     shaped_race_info: ShapedRaceInfo
     shaped_race_detail_info: ShapedRaceDetailInfo
+    shaped_pay_result: ShapedPayResult
+
+    

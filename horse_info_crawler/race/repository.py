@@ -2,7 +2,7 @@ import csv
 import dataclasses
 
 from pandas.core.frame import DataFrame
-from horse_info_crawler.race.domain import ShapedRaceData, ShapedRaceDetailInfo
+from horse_info_crawler.race.domain import PayResult, ShapedPayResult, ShapedRaceData, ShapedRaceDetailInfo
 import io
 from datetime import datetime
 from typing import Any, List
@@ -30,8 +30,14 @@ class DataFormatter:
                 elem_df[basic_info] = race_data_dict[basic_info]
             concat_list.append(elem_df)
         if len(concat_list) == 0:
-            return None
+            return pd.DataFrame()
         shaped_race_history_df = pd.concat(concat_list)
+        shaped_race_history_df["cross_join_key"] = "x"
+        pay_result_df = self.pay_result_to_df(shaped_race_data.shaped_pay_result)
+        if pay_result_df.shape[0] == 0:
+            return shaped_race_history_df
+        shaped_race_history_df = shaped_race_history_df.merge(pay_result_df, how="left", on="cross_join_key")
+        shaped_race_history_df.drop("cross_join_key", axis=1, inplace=True)
         return shaped_race_history_df
 
     def shaped_detail_info_list_to_df(self, shape_race_detail_info: ShapedRaceDetailInfo) -> DataFrame:
@@ -43,6 +49,13 @@ class DataFormatter:
         shaped_detail_info_df = pd.DataFrame(elem_list, columns=shape_race_detail_info.__dict__.keys())
         return shaped_detail_info_df
 
+    def pay_result_to_df(self, shaped_pay_result: ShapedPayResult) -> DataFrame:
+        if not shaped_pay_result:
+            return pd.DataFrame()
+        df = pd.DataFrame(shaped_pay_result.__dict__,index=[0])
+        df["cross_join_key"] = "x"
+        return df
+
 
 @dataclasses.dataclass
 class RaceInfoRepository:
@@ -52,7 +65,8 @@ class RaceInfoRepository:
     def save_shaped_race_info(self, shaped_race_info_list: List[ShapedRaceData]):
         # shaped_race_data を dataframeに変換する
         df_data = self.formatter.data_to_df(shaped_race_info_list)
-        if not df_data:
+        #logger.info(df_data)
+        if df_data.shape[0] == 0:
             logger.info("no data to save.")
             return
         current_date_ymd = self.current_datetime.strftime("%Y-%m-%d")

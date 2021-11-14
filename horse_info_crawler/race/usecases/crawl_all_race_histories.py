@@ -49,8 +49,8 @@ class CrawlRaceHistoriesUsecase:
                
                 if NETKEIBA_BASE_URL[:-1] + race_info_page_url in crawled_urls:
                     logger.info("already crawled. skip...")
-                    crawl_end_flg = True
-                    break
+                    #crawl_end_flg = True
+                    #break
                 try:
                     if self._get_race_info(race_info_page_url):
                         race_histories.append(self._get_race_info(race_info_page_url))
@@ -116,6 +116,7 @@ class CrawlRaceHistoriesUsecase:
             concat_list.append(pd.read_csv(i))
         concat_df = pd.concat(concat_list, axis=0)
         crawled_urls = set(list(concat_df.race_url))
+        del concat_df
         return list(crawled_urls)
 
     
