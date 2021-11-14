@@ -1,7 +1,8 @@
+from horse_info_crawler.components import logger
 from horse_info_crawler.race.normalizer import UnsupportedFormatError
 from pandas.core.frame import DataFrame
 import pandas as pd
-from horse_info_crawler.race.domain import RaceDetailInfo, RaceInfo, ListingPage
+from horse_info_crawler.race.domain import RaceDetailInfo, RaceInfo, ListingPage, PayResult
 from horse_info_crawler.race.config import RACE_LISTING_PAGE_POST_INPUT_DIC
 from bs4 import BeautifulSoup
 import re
@@ -19,9 +20,15 @@ class RaceInfoListingPageParser:
 
     def parse(self, html: str) -> ListingPage:
         soup = BeautifulSoup(html, "html.parser")
-
+        
         next_page_url = None
         next_page_element = soup.select_one("div.pager a:contains('次')")
+        
+        # ページによってパーサーを変えないと正常にパースできないパースがあるので、その対応
+        if not next_page_element:
+            soup = BeautifulSoup(html, "lxml")
+            next_page_element = soup.select_one("div.pager a:contains('次')")
+
         if next_page_element:
             RACE_LISTING_PAGE_POST_INPUT_DIC["page"] = RACE_LISTING_PAGE_POST_INPUT_DIC.get(
                 "page") + 1
@@ -49,7 +56,8 @@ class RaceInfoParser:
             race_number=self._parse_race_number(soup),
             course_run_info=self._course_run_info(soup),
             held_info=self._parse_held_info(soup),
-            race_detail_info=self._parse_race_details(soup)
+            race_detail_info=self._parse_race_details(soup),
+            pay_result=self._parse_pay_result(soup)
         )
     def _parse_race_url(self, soup: BeautifulSoup) -> str:
         if soup.find("a", class_="active", title="R") is None:
@@ -118,4 +126,40 @@ class RaceInfoParser:
                 trainer_names=horse_detail_dict['調教師'],
                 horse_owners=horse_detail_dict['馬主'],
                 earn_prizes=horse_detail_dict['賞金(万円)']
+        )
+
+    def _parse_pay_result(self, soup: BeautifulSoup):
+        tables = soup.find_all("table", summary="払い戻し")
+        if len(tables) == 0:
+            logger.warning("no payresult data.")
+            return None
+        pay_result_dict = {}
+        for table in tables:
+            count = 0
+            for i in table.find_all("th"):
+                pay_result_dict[i.text] = [i.get_text(',').split(',') for i in table.find_all("tr")[count].find_all("td")]
+                count += 1
+        if "単勝" not in pay_result_dict.keys() or len(pay_result_dict["単勝"][0]) != 1:
+            pay_result_dict["単勝"] = [[None],[None]]
+        if "複勝" not in pay_result_dict.keys() or len(pay_result_dict["複勝"][0]) != 3:
+            pay_result_dict["複勝"] = [[None,None,None],[None,None,None],[None,None,None]]
+        if "馬連" not in pay_result_dict.keys():
+            pay_result_dict["馬連"] = [[None,None,None],[None,None,None],[None,None,None]]
+        if "ワイド" not in pay_result_dict.keys() or len(pay_result_dict["ワイド"][0]) != 3:
+            pay_result_dict["ワイド"] = [[None,None,None],[None,None,None],[None,None,None]]
+        if "馬単" not in pay_result_dict.keys():
+            pay_result_dict["馬単"] = [[None,None,None],[None,None,None],[None,None,None]]
+        if "三連単" not in pay_result_dict.keys():
+            pay_result_dict["三連単"] = [[None,None,None],[None,None,None],[None,None,None]]
+        if "三連複" not in pay_result_dict.keys():
+            pay_result_dict["三連複"] = [[None,None,None],[None,None,None],[None,None,None]]
+
+        return PayResult(
+            tansho=pay_result_dict["単勝"],
+            fukusho=pay_result_dict["複勝"],
+            umaren=pay_result_dict["馬連"],
+            wide=pay_result_dict["ワイド"],
+            umatan=pay_result_dict["馬単"],
+            sanrentan=pay_result_dict["三連単"],
+            sanrenpuku=pay_result_dict["三連複"]
         )

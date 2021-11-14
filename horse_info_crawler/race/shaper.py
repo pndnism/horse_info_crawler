@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from horse_info_crawler.components import logger
 from horse_info_crawler.race.normalizer import RaceDetailsNormalizer, RaceInfoNormalizer
-from horse_info_crawler.race.domain import RaceDetailInfo, RaceInfo, ShapedRaceData, ShapedRaceDetailInfo, ShapedRaceInfo
+from horse_info_crawler.race.domain import RaceDetailInfo, RaceInfo, ShapedPayResult, ShapedRaceData, ShapedRaceDetailInfo, ShapedRaceInfo
 from typing import Type
 
 
@@ -12,7 +13,8 @@ class RaceInfoShaper:
     def shape(self, race_info: RaceInfo) -> ShapedRaceData:
         return ShapedRaceData(
             shaped_race_info=self.shape_race_info(race_info),
-            shaped_race_detail_info=self.shape_race_detail_info(race_info.race_detail_info)
+            shaped_race_detail_info=self.shape_race_detail_info(race_info.race_detail_info),
+            shaped_pay_result=self.shape_pay_result(race_info.pay_result)
         )
 
     def shape_race_info(self, race_info: RaceInfo):
@@ -87,4 +89,22 @@ class RaceInfoShaper:
                 race_detail_info.horse_owners),
             earn_prizes=self.race_details_normalizer.normalize_earn_prizes(
                 race_detail_info.earn_prizes),
+        )
+
+    def shape_pay_result(self, pay_result):
+        if not pay_result:
+            return None
+        if pay_result.tansho[0][0] == "特":
+            return None
+        return ShapedPayResult(
+            tansho_prize = pay_result.tansho[1][0],
+            fukusho_prize_1st = pay_result.fukusho[1][0],
+            fukusho_prize_2nd = pay_result.fukusho[1][1],
+            umaren_prize = pay_result.umaren[1][0],
+            wide_prize_1st_2nd = pay_result.wide[1][0], 
+            wide_prize_1st_3rd = pay_result.wide[1][1],
+            wide_prize_2nd_3rd = pay_result.wide[1][2],
+            umatan_prize = pay_result.umatan[1][0],
+            sanrentan_prize = pay_result.sanrentan[1][0],
+            sanrenpuku_prize = pay_result.sanrenpuku[1][0],
         )
