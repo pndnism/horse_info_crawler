@@ -29,6 +29,8 @@ class DataFormatter:
                 elem_df[basic_info] = race_data_dict[basic_info]
             concat_list.append(elem_df)
 
+        if len(concat_list) == 0:
+            return None
         shaped_race_history_df = pd.concat(concat_list)
         return shaped_race_history_df
 
@@ -36,6 +38,8 @@ class DataFormatter:
         elem_list = []
         for elem in shape_race_detail_info.__dict__.values():
             elem_list.append(elem)
+        if len(elem_list) == 1:
+            return None
         # TODO: np.arrayに変換してから転置してる、ちょっと不格好
         elem_list = np.array(elem_list).T
         shaped_detail_info_df = pd.DataFrame(elem_list, columns=shape_race_detail_info.__dict__.keys())

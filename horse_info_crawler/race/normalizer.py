@@ -53,6 +53,8 @@ class RaceInfoNormalizer:
             elem = course_run_info.split(" / ")[0]
             if elem is None:
                 return None
+            if not re.search("右|左|直線|ダート|外|内-外|外-内|内2周", elem):
+                return None
             return re.search("右|左|直線|ダート|外|内-外|外-内|内2周", elem).group()
 
         raise InvalidFormatError(f'Invalid format. : {course_run_info}')
@@ -189,28 +191,40 @@ class RaceDetailsNormalizer:
 
     @classmethod
     def normalize_order_transitions(cls, order_transitions: List[str]) -> List[str]:
+        if not order_transitions:
+            return None
         return [i.text for i in order_transitions]
 
     @classmethod
     def normalize_half_times(cls, half_times: List[str]) -> List[str]:
+        if not half_times:
+            return None
         return [i.text for i in half_times]
 
     @classmethod
     def normalize_odds(cls, odds: List[str]) -> List[str]:
+        if not odds:
+            return None
         return [i.text for i in odds]
 
     @classmethod
     def normalize_popularities(cls, popularities: List[str]) -> List[str]:
+        if not popularities:
+            return None
         return [i.text for i in popularities]
 
     @classmethod
     def normalize_horse_weights(cls, horse_weights: List[str]) -> List[str]:
+        if not horse_weights:
+            return None
         raw_list = [i.text for i in horse_weights]
         return [re.findall("(\d+)\(",raw)[0] if "計不" not in raw and 
                                                     len(re.findall("(\d+)\(",raw)) >=1 else None for raw in raw_list]
 
     @classmethod
     def normalize_horse_weight_diffs(cls, horse_weights: List[str]) -> List[str]:
+        if not horse_weights:
+            return None
         if "計不" in horse_weights:
             return None
         raw_list = [i.text for i in horse_weights]
@@ -220,14 +234,20 @@ class RaceDetailsNormalizer:
 
     @classmethod
     def normalize_trainer_names(cls, trainer_names: List[str]) -> List[str]:
+        if not trainer_names:
+            return None
         raw_list = [i.text for i in trainer_names]
         return [raw.replace("\n", "") for raw in raw_list]
 
     @classmethod
     def normalize_horse_owners(cls, horse_owners: List[str]) -> List[str]:
+        if not horse_owners:
+            return None
         raw_list = [i.text for i in horse_owners]
         return [raw.replace("\n", "") for raw in raw_list]
 
     @classmethod
     def normalize_earn_prizes(cls, earn_prizes: List[str]) -> List[str]:
+        if not earn_prizes:
+            return None
         return [i.text for i in earn_prizes]

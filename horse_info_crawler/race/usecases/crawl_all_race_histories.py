@@ -11,6 +11,7 @@ from typing import Optional, List
 from horse_info_crawler.race.shaper import RaceInfoShaper
 from horse_info_crawler.race.scraper import DetailPageNotFoundError, NETKEIBA_BASE_URL, RaceInfoListingPageScraper, RaceInfoScraper
 from horse_info_crawler.components import logger
+import gc
 
 @dataclass
 class CrawlRaceHistoriesUsecase:
@@ -20,22 +21,33 @@ class CrawlRaceHistoriesUsecase:
     race_info_repository: RaceInfoRepository
 
     def exec(self, crawl_limit: Optional[int] = None):
-        logger.info(f'Start crawl_race_histories. crawl_limit: {crawl_limit}')
-        race_histories = self._crawl_race_histories(crawl_limit)
 
-        # race_histories を CSV に変換して ローカルに保存する
-        self.race_info_repository.save_shaped_race_info(self._shape_race_infos(race_histories))
-        logger.info("End crawl_race_histories.")
+        # while 
+        # logger.info(f'Start crawl_race_histories. crawl_limit: {crawl_limit}')
+        # race_histories = self._crawl_race_histories(crawl_limit)
+
+        # # race_histories を CSV に変換して ローカルに保存する
+        # self.race_info_repository.save_shaped_race_info(self._shape_race_infos(race_histories))
+        # logger.info("End crawl_race_histories.")
+        listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
+        crawled_urls = self._check_crawled_urls()
+        while listing_page_url:
+            race_histories, next_listing_url = self._crawl_race_histories(crawl_limit, listing_page_url, crawled_urls)
+            self.race_info_repository.save_shaped_race_info(self._shape_race_infos(race_histories))
+            listing_page_url = next_listing_url
+            del race_histories
+            gc.collect()
 
     def _prepare_to_check_saved_urls():
         pass
     
-    def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
+    def _crawl_race_histories(self, crawl_limit: Optional[int] = None, listing_page_url: str = None, crawled_urls: List[str] = []) -> List[RaceInfo]:
         race_histories = []
-        crawled_urls = self._check_crawled_urls()
+        
         # リスティングページをクロールして物件詳細の URL 一覧を取得する
-        listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
-        while listing_page_url:
+        #listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
+        page_count = 0
+        while listing_page_url and page_count < crawl_limit: 
             listing_page = self.race_info_listing_page_scraper.get(listing_page_url)
             for_log = listing_page_url[:20] + "~" + listing_page_url[-20:]
             logger.info(
@@ -48,7 +60,7 @@ class CrawlRaceHistoriesUsecase:
                
                 if NETKEIBA_BASE_URL[:-1] + race_info_page_url in crawled_urls:
                     logger.info("already crawled. skip...")
-                    continue
+                    return race_histories, None
                 try:
                     if self._get_race_info(race_info_page_url):
                         race_histories.append(self._get_race_info(race_info_page_url))
@@ -56,19 +68,21 @@ class CrawlRaceHistoriesUsecase:
                         raise DetailPageNotFoundError("table not found.")
                 except DetailPageNotFoundError as e:
                     logger.warning(f"Skip getting race:{e}")
-                    # TODO: sentryとかエラー監視ツール入れる
 
-                if crawl_limit and len(race_histories) >= crawl_limit:
-                    # crawl_limit の件数に達したらクロールを終了する
-                    logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
-                    return race_histories
+            # if crawl_limit and len(race_histories) >= crawl_limit:
+            #     # crawl_limit の件数に達したらクロールを終了する
+            #     logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
+            #     return race_histories, listing_page_url
+
+            
 
             # next_page_url がある場合は次ページへアクセス
-            print(listing_page.next_page_url)
-            listing_page_url = listing_page.next_page_url 
+            listing_page_url = listing_page.next_page_url
+            page_count += 1
+            logger.info(f"crawled page count: {page_count}")
         
         logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
-        return race_histories
+        return race_histories, listing_page_url
 
     def _get_race_info(self, race_info_url: str) -> RaceInfo:
             """
@@ -111,6 +125,8 @@ class CrawlRaceHistoriesUsecase:
             concat_list.append(pd.read_csv(i))
         concat_df = pd.concat(concat_list, axis=0)
         crawled_urls = set(list(concat_df.race_url))
+        del concat_df
+        gc.collect()
         return list(crawled_urls)
 
     

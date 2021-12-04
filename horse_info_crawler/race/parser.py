@@ -18,7 +18,7 @@ class RaceInfoListingPageParser:
     """
 
     def parse(self, html: str) -> ListingPage:
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(html, "lxml")
 
         next_page_url = None
         next_page_element = soup.select_one("div.pager a:contains('次')")
@@ -99,6 +99,14 @@ class RaceInfoParser:
             for i in tmp:
                 horse_detail_dict[list(horse_detail_dict.keys())[count]].append(i)
                 count += 1
+        race_info_list = [
+            "着順","枠番","馬番","馬名","性齢","斤量",
+            "騎手","タイム","着差","通過","上り","単勝",
+            "人気","馬体重","調教師","馬主","賞金(万円)"
+            ]
+        for i in race_info_list:
+            if i not in horse_detail_dict.keys():
+                horse_detail_dict[i] = None
         
         return RaceDetailInfo(
                 arrival_orders=horse_detail_dict['着順'],
