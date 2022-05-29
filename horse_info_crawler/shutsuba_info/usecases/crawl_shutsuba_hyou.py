@@ -29,7 +29,6 @@ class CrawlShutsubaHyouUsecase:
         race_num = ("0" + str(SHUTUBA_RACE_INFO["race_num"]))[-2:]
         race_info_url = f"{NETKEIBA_BASE_URL}race/shutuba.html?race_id={_year}{place_id}{kaisu}{nichime}{race_num}"
         race_info = self._get_race_info(race_info_url)
-        # logger.info(f"race_info: {race_info}")
         self.race_info_repository.save_shaped_race_info(
             self._shape_race_info(race_info))
         logger.info("End crawl_race_histories.")

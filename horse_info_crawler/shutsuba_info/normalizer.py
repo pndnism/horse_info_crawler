@@ -79,11 +79,14 @@ class RaceInfoNormalizer:
             if len(re.split(':', elem)) < 2:
                 return None
             return re.split(':', elem)[1]
-
-        raise InvalidFormatError(f'Invalid format. : {course_run_info}')
+        else:
+            logger.warning("天気情報が存在しません")
+            return None
 
     @classmethod
     def normalize_course_condition(cls, course_run_info: str) -> str:
+        if len(course_run_info.split(" / ")) < 3:
+            return None
         elem = course_run_info.split(" / ")[3]
         if elem is None:
             return None
@@ -158,6 +161,8 @@ class RaceDetailsNormalizer:
 
     @classmethod
     def normalize_horse_weights(cls, horse_weights: List[str]) -> List[str]:
+        if horse_weights[0] != horse_weights[0]:
+            return [None for i in horse_weights]
         return [
             re.findall(
                 r"(\d+)\(",
@@ -169,6 +174,8 @@ class RaceDetailsNormalizer:
     @classmethod
     def normalize_horse_weight_diffs(
             cls, horse_weights: List[str]) -> List[str]:
+        if horse_weights[0] != horse_weights[0]:
+            return [None for i in horse_weights]
         if "計不" in horse_weights:
             return None
         return [

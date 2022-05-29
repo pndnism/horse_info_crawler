@@ -38,8 +38,8 @@ PLACE_ID_DICT = {
 SHUTUBA_RACE_INFO = {
     "year": 2022,
     "place": "東京",
-    "kaisu": 2,
-    "nichime": 12,
+    "kaisu": 3,
+    "nichime": 2,
     "race_num": 11
 }
 
