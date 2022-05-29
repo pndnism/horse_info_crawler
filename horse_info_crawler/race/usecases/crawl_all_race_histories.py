@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from os import name
-import urllib
 from horse_info_crawler.race.repository import RaceInfoRepository
 from horse_info_crawler.race.normalizer import InvalidFormatError, UnsupportedFormatError
 from urllib.parse import urlencode
@@ -11,6 +10,9 @@ from typing import Optional, List
 from horse_info_crawler.race.shaper import RaceInfoShaper
 from horse_info_crawler.race.scraper import DetailPageNotFoundError, NETKEIBA_BASE_URL, RaceInfoListingPageScraper, RaceInfoScraper
 from horse_info_crawler.components import logger
+from google.cloud import storage
+import re
+
 
 @dataclass
 class CrawlRaceHistoriesUsecase:
@@ -24,20 +26,24 @@ class CrawlRaceHistoriesUsecase:
         race_histories = self._crawl_race_histories(crawl_limit)
 
         # race_histories を CSV に変換して ローカルに保存する
-        self.race_info_repository.save_shaped_race_info(self._shape_race_infos(race_histories))
+        self.race_info_repository.save_shaped_race_info(
+            self._shape_race_infos(race_histories))
         logger.info("End crawl_race_histories.")
 
     def _prepare_to_check_saved_urls():
         pass
-    
-    def _crawl_race_histories(self, crawl_limit: Optional[int] = None) -> List[RaceInfo]:
+
+    def _crawl_race_histories(
+            self,
+            crawl_limit: Optional[int] = None) -> List[RaceInfo]:
         race_histories = []
         crawl_end_flg = False
         crawled_urls = self._check_crawled_urls()
         # リスティングページをクロールして物件詳細の URL 一覧を取得する
         listing_page_url = self.race_info_listing_page_scraper.LISTING_PAGE_START_URLS
         while listing_page_url:
-            listing_page = self.race_info_listing_page_scraper.get(listing_page_url)
+            listing_page = self.race_info_listing_page_scraper.get(
+                listing_page_url)
             for_log = listing_page_url[:20] + "~" + listing_page_url[-20:]
             logger.info(
                 f"listing_page_url: {for_log}, race_info_page_urls count: {len(listing_page.race_info_page_urls)}")
@@ -46,14 +52,15 @@ class CrawlRaceHistoriesUsecase:
             for race_info_page_url in listing_page.race_info_page_urls:
                 # CSV にアップロードするデータ構造をいれる
                 # Errorが発生したら該当PropertyはSkipする
-               
+
                 if NETKEIBA_BASE_URL[:-1] + race_info_page_url in crawled_urls:
                     logger.info("already crawled. skip...")
-                    #crawl_end_flg = True
-                    #break
+                    crawl_end_flg = True
+                    break
                 try:
                     if self._get_race_info(race_info_page_url):
-                        race_histories.append(self._get_race_info(race_info_page_url))
+                        race_histories.append(
+                            self._get_race_info(race_info_page_url))
                     else:
                         raise DetailPageNotFoundError("table not found.")
                 except DetailPageNotFoundError as e:
@@ -62,33 +69,37 @@ class CrawlRaceHistoriesUsecase:
 
                 if crawl_limit and len(race_histories) >= crawl_limit:
                     # crawl_limit の件数に達したらクロールを終了する
-                    logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
+                    logger.info(
+                        f"Finish crawl. race_histories count: {len(race_histories)}")
                     return race_histories
 
             # next_page_url がある場合は次ページへアクセス
             if crawl_end_flg:
                 break
             print(listing_page.next_page_url)
-            listing_page_url = listing_page.next_page_url 
-        
-        logger.info(f"Finish crawl. race_histories count: {len(race_histories)}")
+            listing_page_url = listing_page.next_page_url
+
+        logger.info(
+            f"Finish crawl. race_histories count: {len(race_histories)}")
         return race_histories
 
     def _get_race_info(self, race_info_url: str) -> RaceInfo:
-            """
-            レースのクロールをして rawデータを返す
-            Args:
-                race_info_url:
-            Returns:
-            """
-            race_info = self.race_info_scraper.get(race_info_url)
-            if race_info.race_detail_info is None:
-                return None
+        """
+        レースのクロールをして rawデータを返す
+        Args:
+            race_info_url:
+        Returns:
+        """
+        race_info = self.race_info_scraper.get(race_info_url)
+        if race_info.race_detail_info is None:
+            return None
 
-            # CSV にアップロードするデータ構造をいれる
-            return race_info
+        # CSV にアップロードするデータ構造をいれる
+        return race_info
 
-    def _shape_race_infos(self, race_info_list: List[RaceInfo]) -> List[ShapedRaceData]:
+    def _shape_race_infos(
+            self,
+            race_info_list: List[RaceInfo]) -> List[ShapedRaceData]:
         shaped_race_info_list = []
         for race_info in race_info_list:
             try:
@@ -108,16 +119,21 @@ class CrawlRaceHistoriesUsecase:
 
     def _check_crawled_urls(self):
         # TODO: cloud strageを参照するようにしたい
-        check_csvs = glob.glob("/Users/daikimiyazaki/workspace/pndnism/horse_race_prediction/horse_info_crawler/horse_info_crawler/race/data/race_histories/**/*.csv",recursive=True)
+        client = storage.Client()
+        bucket_name = 'pndnism_horse_data'
+        blobs = client.list_blobs(bucket_name)
+        check_csvs = [blob.name for blob in blobs if re.match(
+            r"race_histories\/\d{4}\-\d{2}\-\d{2}\/\w+\.csv", blob.name)]
+        # check_csvs = glob.glob(
+        #     "/Users/daikimiyazaki/workspace/pndnism/horse_race_prediction/horse_info_crawler/horse_info_crawler/race/data/race_histories/**/*.csv",
+        #     recursive=True)
         concat_list = []
         if len(check_csvs) == 0:
             return []
         for i in check_csvs:
-            concat_list.append(pd.read_csv(i))
+            logger.info(f"gs://{bucket_name}/{i}")
+            concat_list.append(pd.read_csv(f"gs://{bucket_name}/{i}"))
         concat_df = pd.concat(concat_list, axis=0)
         crawled_urls = set(list(concat_df.race_url))
         del concat_df
         return list(crawled_urls)
-
-    
-

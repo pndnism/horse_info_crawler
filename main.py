@@ -2,12 +2,25 @@ from typing import Optional
 import click
 from horse_info_crawler.race import usecases as race_usecases
 from horse_info_crawler.pedigree import usecases as horse_usecases
+from horse_info_crawler.shutsuba_info import usecases as shutsuba_info_usecases
 import sentry_sdk
 
 
 @click.group()
 def main():
     pass
+
+
+@main.command("shutsuba_hyou")
+def crawl_shutsuba_hyou():
+    """
+    Shutsuba Hyou
+    """
+    usecase = shutsuba_info_usecases.get_crawl_shutsuba_info_usecase()
+    usecase.exec()
+
+    click.echo("crawl_shutsuba_info Completed")
+
 
 @main.command("race")
 @click.option("--crawl-limit", default=None, type=int)
@@ -22,6 +35,7 @@ def crawl_race_history(crawl_limit: Optional[int]):
 
     click.echo("crawl_race_history Completed")
 
+
 @main.command("horse")
 @click.option("--crawl-limit", default=None, type=int)
 def crawl_horse_info(crawl_limit: Optional[int]):
@@ -35,10 +49,9 @@ def crawl_horse_info(crawl_limit: Optional[int]):
 
     click.echo("crawl_horse_info Completed")
 
+
 if __name__ == '__main__':
     sentry_sdk.init(
-    "https://317bab5f08b64718afadc66afe0a0cce@o495078.ingest.sentry.io/5567225",
-    traces_sample_rate=1.0
-    )
+        "https://317bab5f08b64718afadc66afe0a0cce@o495078.ingest.sentry.io/5567225",
+        traces_sample_rate=1.0)
     main()
-    

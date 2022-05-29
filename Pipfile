@@ -9,7 +9,7 @@ flake8 = "*"
 
 [packages]
 bs4 = "*"
-pandas = "*"
+pandas = "0.24.0"
 requests = {extras = ["socks"], version = "*"}
 responses = "*"
 boto3 = "*"
@@ -19,6 +19,8 @@ lxml = "*"
 sentry-sdk = "*"
 pysocks = "*"
 google-cloud-storage = "*"
+fsspec = "*"
+gcsfs = "*"
 
 [requires]
 python_version = "3.8.1"
